@@ -25,6 +25,23 @@
         <jfritz.releaseDirectory>${project.build.directory}/release</jfritz.releaseDirectory>
         <exec.wine>/usr/bin/wine64</exec.wine>
         <exec.iscc>/home/robert/.wine/drive_c/Program Files (x86)/Inno Setup 5/ISCC.exe</exec.iscc>
+
+        <version.proxy>1.0.2</version.proxy>
+        <version.fboxlib>1.0.26</version.fboxlib>
+        <version.reverseLookup>1.0.10</version.reverseLookup>
+
+        <version.httpClient>4.5.3</version.httpClient>
+        <version.commonsIo>2.4</version.commonsIo>
+        <version.jdom>1.1.3</version.jdom>
+        <version.jacob>1.18</version.jacob>
+        <version.jcalendar>1.3.2</version.jcalendar>
+        <version.jfreechart>1.0.2</version.jfreechart>
+        <version.looks>2.2.2</version.looks>
+        <version.fontchooser>2.0</version.fontchooser>
+        <version.log4j>1.2.17</version.log4j>
+
+        <version.mockito>1.9.5</version.mockito>
+        <version.junit>4.8.1</version.junit>
     </properties>
 
     <scm>
@@ -43,86 +60,86 @@
         <dependency>
             <groupId>org.jfritz</groupId>
             <artifactId>proxy</artifactId>
-            <version>1.0.2</version>
+            <version>${version.proxy}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jfritz</groupId>
             <artifactId>fboxlib</artifactId>
-            <version>1.0.26</version>
+            <version>${version.fboxlib}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jfritz</groupId>
             <artifactId>reverseLookup</artifactId>
-            <version>1.0.10</version>
+            <version>${version.reverseLookup}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.3</version>
+            <version>${version.httpClient}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.directory.studio</groupId>
             <artifactId>org.apache.commons.io</artifactId>
-            <version>2.4</version>
+            <version>${version.commonsIo}</version>
         </dependency>
 
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom-legacy</artifactId>
-            <version>1.1.3</version>
+            <version>${version.jdom}</version>
         </dependency>
 
         <dependency>
             <groupId>com.hynnet</groupId>
             <artifactId>jacob</artifactId>
-            <version>1.18</version>
+            <version>${version.jacob}</version>
         </dependency>
 
         <dependency>
             <groupId>com.toedter</groupId>
             <artifactId>jcalendar</artifactId>
-            <version>1.3.2</version> <!-- 1.4 available -->
+            <version>${version.jcalendar}</version> <!-- 1.4 available -->
         </dependency>
 
         <dependency>
             <groupId>jfree</groupId>
             <artifactId>jfreechart</artifactId>
-            <version>1.0.2</version> <!-- 1.0.2 used, 1.0.13 available, also 1.5.0 -->
+            <version>${version.jfreechart}</version> <!-- 1.0.2 used, 1.0.13 available, also 1.5.0 -->
         </dependency>
 
         <dependency>
             <groupId>com.jgoodies</groupId> <!-- look and feel -->
             <artifactId>looks</artifactId>
-            <version>2.2.2</version>
+            <version>${version.looks}</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.dheid</groupId>
             <artifactId>fontchooser</artifactId>
-            <version>2.0</version>
+            <version>${version.fontchooser}</version>
         </dependency>
 
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <version>${version.log4j}</version>
         </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.9.5</version>
+            <version>${version.mockito}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
