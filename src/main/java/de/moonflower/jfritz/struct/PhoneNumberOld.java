@@ -281,7 +281,8 @@ public class PhoneNumberOld implements Serializable {
 				// International number
 				|| isSIPNumber() // SIP Number
 				|| isEmergencyCall() // Emergency
-				|| isQuickDial()) // FritzBox QuickDial
+				|| isQuickDial() // FritzBox QuickDial
+				|| isFbTcode())
 		{
 			return number;
 		} else if (countryPrefix != null && number.startsWith(countryPrefix)) {// International call
@@ -438,6 +439,14 @@ public class PhoneNumberOld implements Serializable {
 		} else {
 			return false;
 		}
+	}
+
+	public boolean isFbTcode() {
+		return isFbTcode(number);
+	}
+
+	public static boolean isFbTcode(String number) {
+		return number.startsWith("*") || number.startsWith("#");
 	}
 
 	public boolean isValidForReverseLookup() {

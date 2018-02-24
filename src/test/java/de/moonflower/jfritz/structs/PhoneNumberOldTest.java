@@ -81,4 +81,247 @@ public class PhoneNumberOldTest {
         n = new PhoneNumberOld(PropertyProvider.getInstance(), "+497211234567", false);
         assertTrue(n.isValidForReverseLookup());
     }
+
+    @Test
+    public void testFboxTelephoneCodes() {
+        assertFalse(PhoneNumberOld.isFbTcode("+491791234567"));
+        assertFalse(PhoneNumberOld.isFbTcode("00491791234567"));
+        assertFalse(PhoneNumberOld.isFbTcode("01791234567"));
+        assertFalse(PhoneNumberOld.isFbTcode("1234567"));
+        assertFalse(PhoneNumberOld.isFbTcode("123"));
+
+        // an Liste von http://www.wehavemorefun.de/fritzbox/Tastencodes orientiert
+        assertTrue(PhoneNumberOld.isFbTcode("**09")); //  Heranholen eines Anrufs
+
+        assertTrue(PhoneNumberOld.isFbTcode("*10#")); //  Über das Analog-Festnetz (POTS) die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*10#1234567")); //  Über das Analog-Festnetz (POTS) die Nummer 1234567 wählen
+
+        assertTrue(PhoneNumberOld.isFbTcode("*11#")); //  Über das ISDN-Festnetz die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*11#1234567")); //  Über das ISDN-Festnetz die Nummer 1234567 wählen
+
+        assertTrue(PhoneNumberOld.isFbTcode("*110#")); //  Über das ISDN-Festnetz mit der 10. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*110#1234567")); //  Über das ISDN-Festnetz mit der 10. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*111#")); //  Über das ISDN-Festnetz mit der 1. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*111#1234567")); //  Über das ISDN-Festnetz mit der 1. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*112#")); //  Über das ISDN-Festnetz mit der 2. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*112#1234567")); //  Über das ISDN-Festnetz mit der 2. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*113#")); //  Über das ISDN-Festnetz mit der 3. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*113#1234567")); //  Über das ISDN-Festnetz mit der 3. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*114#")); //  Über das ISDN-Festnetz mit der 4. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*114#1234567")); //  Über das ISDN-Festnetz mit der 4. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*115#")); //  Über das ISDN-Festnetz mit der 5. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*115#1234567")); //  Über das ISDN-Festnetz mit der 5. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*116#")); //  Über das ISDN-Festnetz mit der 6. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*116#1234567")); //  Über das ISDN-Festnetz mit der 6. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*117#")); //  Über das ISDN-Festnetz mit der 7. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*117#1234567")); //  Über das ISDN-Festnetz mit der 7. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*118#")); //  Über das ISDN-Festnetz mit der 8. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*118#1234567")); //  Über das ISDN-Festnetz mit der 8. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*119#")); //  Über das ISDN-Festnetz mit der 9. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*119#1234567")); //  Über das ISDN-Festnetz mit der 9. MSN die Nummer 1234567 wählen
+
+        assertTrue(PhoneNumberOld.isFbTcode("*12#")); // Über eine Internetrufnummer die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*12#1234567")); // Über eine Internetrufnummer die Nummer 1234567 wählen
+
+        assertTrue(PhoneNumberOld.isFbTcode("*120#")); //  Über das ISDN-Festnetz mit der 10. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*120#1234567")); //  Über das ISDN-Festnetz mit der 10. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*121#")); //  Über das ISDN-Festnetz mit der 1. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*121#1234567")); //  Über das ISDN-Festnetz mit der 1. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*122#")); //  Über das ISDN-Festnetz mit der 2. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*122#1234567")); //  Über das ISDN-Festnetz mit der 2. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*123#")); //  Über das ISDN-Festnetz mit der 3. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*123#1234567")); //  Über das ISDN-Festnetz mit der 3. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*124#")); //  Über das ISDN-Festnetz mit der 4. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*124#1234567")); //  Über das ISDN-Festnetz mit der 4. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*125#")); //  Über das ISDN-Festnetz mit der 5. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*125#1234567")); //  Über das ISDN-Festnetz mit der 5. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*126#")); //  Über das ISDN-Festnetz mit der 6. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*126#1234567")); //  Über das ISDN-Festnetz mit der 6. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*127#")); //  Über das ISDN-Festnetz mit der 7. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*127#1234567")); //  Über das ISDN-Festnetz mit der 7. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*128#")); //  Über das ISDN-Festnetz mit der 8. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*128#1234567")); //  Über das ISDN-Festnetz mit der 8. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*129#")); //  Über das ISDN-Festnetz mit der 9. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*129#1234567")); //  Über das ISDN-Festnetz mit der 9. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1211#")); //  Über das ISDN-Festnetz mit der 11. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1211#1234567")); //  Über das ISDN-Festnetz mit der 11. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1212#")); //  Über das ISDN-Festnetz mit der 12. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1212#1234567")); //  Über das ISDN-Festnetz mit der 12. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1213#")); //  Über das ISDN-Festnetz mit der 13. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1213#1234567")); //  Über das ISDN-Festnetz mit der 13. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1214#")); //  Über das ISDN-Festnetz mit der 14. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1214#1234567")); //  Über das ISDN-Festnetz mit der 14. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1215#")); //  Über das ISDN-Festnetz mit der 15. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1215#1234567")); //  Über das ISDN-Festnetz mit der 15. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1216#")); //  Über das ISDN-Festnetz mit der 16. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1216#1234567")); //  Über das ISDN-Festnetz mit der 16. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1217#")); //  Über das ISDN-Festnetz mit der 17. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1217#1234567")); //  Über das ISDN-Festnetz mit der 17. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1218#")); //  Über das ISDN-Festnetz mit der 18. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1218#1234567")); //  Über das ISDN-Festnetz mit der 18. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1219#")); //  Über das ISDN-Festnetz mit der 19. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1219#1234567")); //  Über das ISDN-Festnetz mit der 19. MSN die Nummer 1234567 wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1220#")); //  Über das ISDN-Festnetz mit der 20. MSN die folgende Nummer wählen
+        assertTrue(PhoneNumberOld.isFbTcode("*1220#1234567")); //  Über das ISDN-Festnetz mit der 20. MSN die Nummer 1234567 wählen
+
+
+        assertTrue(PhoneNumberOld.isFbTcode("*30#")); // Wahlregeln und LCR für den folgenden Anruf deaktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#30#")); // Wahlregeln und LCR für den folgenden Anruf aktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("*31#")); // Rufnummernunterdrückung (CLIR) für den folgenden Anruf aktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#31#")); // Rufnummernunterdrückung (CLIR) für den folgenden Anruf deaktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("*34#")); // Anklopfschutz für den folgenden Anruf aktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#34#")); // Anklopfschutz für den folgenden Anruf deaktivieren
+
+        assertTrue(PhoneNumberOld.isFbTcode("#564*0*")); // Wahlregeln und LCR für Callthrough deaktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#564*1*")); // Wahlregeln und LCR für Callthrough aktivieren
+
+        assertTrue(PhoneNumberOld.isFbTcode("**600")); // Anrufbeantworter
+
+        assertTrue(PhoneNumberOld.isFbTcode("#81*1*")); // Konfigurierte Klingelsperren für alle Nebenstellen aktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#81*6*")); // Konfigurierte Klingelsperren für alle Nebenstellen deaktivieren
+
+        assertTrue(PhoneNumberOld.isFbTcode("#90*pin*")); // Wahl der Internetrufnummer für das folgende Telefonat entsperren
+        assertTrue(PhoneNumberOld.isFbTcode("#91*pin*")); // Wahl der Internetrufnummer dauerhaft entsperren
+
+        assertTrue(PhoneNumberOld.isFbTcode("#96*2*")); // CAPI-over-TCP deaktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#96*3*")); // CAPI-over-TCP aktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#96*4*")); // Callmonitor-Support deaktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#96*5*")); // Callmonitor-Support aktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#96*6*")); // Bier holen ausgeben
+        assertTrue(PhoneNumberOld.isFbTcode("#96*7*")); // telnetd aktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#96*8*")); // telnetd deaktivieren
+
+        assertTrue(PhoneNumberOld.isFbTcode("#961*0*")); // Anrufweiterschaltung über Vermittlung verbieten (intern forcieren)
+        assertTrue(PhoneNumberOld.isFbTcode("#961*1*")); // Anrufweiterschaltung über Vermittlung zulassen (extern erlauben)
+        assertTrue(PhoneNumberOld.isFbTcode("#961*2*")); // Busy-on-Busy (BoB) für POTS deaktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#961*3*")); // Busy-on-Busy (BoB) für POTS aktivieren (automatisch)
+        assertTrue(PhoneNumberOld.isFbTcode("#961*4*")); // Faxweiche für POTS deaktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#961*5*")); // Faxweiche für POTS aktivieren (detect)
+
+        assertTrue(PhoneNumberOld.isFbTcode("#97*0*")); // MWI aktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#97*1*")); // MWI deaktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#97*2*")); // dtrace deaktivieren
+        assertTrue(PhoneNumberOld.isFbTcode("#97*3*")); // dtrace aktivieren
+
+        assertTrue(PhoneNumberOld.isFbTcode("#99**")); // Werksreset der Telefonie-Einstellungen
+        assertTrue(PhoneNumberOld.isFbTcode("#990*15901590*")); // Neustart
+        assertTrue(PhoneNumberOld.isFbTcode("#991*15901590*")); // Werksreset aller Einstellungen
+
+//*12#
+//*120#
+//*121#
+//*1211#
+//*1212#
+//*1213#
+//*1214#
+//*1215#
+//*1216#
+//*1217#
+//*1218#
+//*1219#
+//*122#
+//*1220#
+//*123#
+//*124#
+//*125#
+//*126#
+//*127#
+//*128#
+//*129#
+//*2#
+//#2ns*1*
+//#2ns*0*
+//*21*xnr#
+//*21*#
+//*21*xnr*msn#
+//*21**msn#
+//*21*xnr*#
+//*21**#
+//*3#
+//*30#
+//#30#
+//*31#
+//#31#
+//*34#
+//#34#
+//        R*37#
+//#37#
+//#40ns**
+//#41ns*nr*
+//#42ns*nr*
+//#43ns*nr*
+//#44ns*nr*
+//#45ns*nr*
+//#46ns*nr*
+//                5
+//#50ns*1*
+//#50ns*0*
+//#51ns*1*
+//#51ns*0*
+//#52ns*1*
+//#52ns*0*
+//#53ns*0*
+//#53ns*1*
+//#56ns*0*
+//#56ns*1*
+//#564*0*
+//#564*1*
+//**600
+//                *61*xnr#
+//*61*#
+//*61*xnr*msn#
+//*61**msn#
+//*61*xnr*#
+//*61**#
+//#62ns*1*
+//#62ns*0*
+//#63ns*1*
+//#63ns*0*
+//*67*xnr#
+//*67*#
+//*67*xnr*msn#
+//*67**msn#
+//*67*xnr*#
+//*67**#
+//#80ns*hhmm*hhmm*
+//#81ns*0*
+//#81ns*1*
+//#81*1*
+//#81ns*6*
+//#81*6*
+//#83*hhmmddmmyyyy*
+//#84*ddmmyyyy*
+//#84**
+//#88w*hhmmd*ns*
+//#88w**
+//#88w#
+//#90**
+//#90*pin*
+//#91**
+//#91*pin*
+//#91*pin1#pin2*pin2*
+//#95*x*
+//#96*2*
+//#96*3*
+//#96*4*
+//#96*5*
+//#96*6*
+//#96*7*
+//#96*8*
+//#960*4*
+//#960*5*
+//#961*0*
+//#961*1*
+//#961*2*
+//#961*3*
+//#961*4*
+//#961*5*
+//#97*0*
+//#97*1*
+//#97*2*
+//#97*3*
+//#99**
+//#990*15901590*
+//#991*15901590*
+    }
 }
