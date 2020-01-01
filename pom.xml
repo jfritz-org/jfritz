@@ -27,7 +27,7 @@
 
         <version.proxy>1.0.2</version.proxy>
         <version.fboxlib>1.0.26</version.fboxlib>
-        <version.reverseLookup>1.0.10</version.reverseLookup>
+        <version.reverseLookup>1.0.11</version.reverseLookup>
 
         <version.httpClient>4.5.3</version.httpClient>
         <version.commonsIo>2.4</version.commonsIo>
