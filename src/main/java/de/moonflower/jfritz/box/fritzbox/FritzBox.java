@@ -89,6 +89,8 @@ public class FritzBox extends BoxClass {
 
 // 31.07.2015 Wahl per Lua
 	private final static String URL_DIAL_FONBOOK_LUA = "/fon_num/dial_fonbook.lua";
+	private final static String URL_DIAL_FONBOOK_LUA_07_08 = "/fon_num/foncalls_list.lua";
+	private final static String URL_DATA_LUA = "/data.lua";
 	private final static String URL_FONBOOK_LIST_LUA = "/fon_num/fonbook_list.lua";
 	private final static String QUERY_DialPort = "telcfg:settings/DialPort";
 
@@ -1291,6 +1293,8 @@ public class FritzBox extends BoxClass {
 		postdata.add(new BasicNameValuePair("clicktodial", "on"));
 		postdata.add(new BasicNameValuePair("port", port)); // port.getDialPort()
 		postdata.add(new BasicNameValuePair("btn_apply", ""));
+		postdata.add(new BasicNameValuePair("sid", fbc.getSid()));
+		postdata.add(new BasicNameValuePair("page", "telDial"));
 	}
 	
 	private void generateDoCallPostData(List<NameValuePair> postdata, String currentNumber, Port port) {
@@ -1312,11 +1316,11 @@ public class FritzBox extends BoxClass {
 				if (firmware != null && firmware.isLowerThan(4, 21)) {
 					// TODO: message, that firmware does not support the calling feature
 				} else if (firmware != null && firmware.isLowerThan(6, 1)) {
-					log.debug("doCall: Firmware is greater/or equal than 04.21 but lower than 06.1");
+					log.debug("doCall: Firmware is greater/or equal than 04.21 but lower than 06.01");
 					generateDoCallPostData(postdata, currentNumber, port);
 				    fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
-				} else {
-					log.debug("doCall: Firmware is greater/or equal than 06.01");
+				} else if (firmware != null && firmware.isLowerThan(7, 8)){
+					log.debug("doCall: Firmware is greater/or equal than 06.01 but lower than 07.08");
 					
 					if (hasDialportChanged(port)) {
 						log.debug("doCall: Setting dialing port to " + port.getDialPort());
@@ -1328,6 +1332,20 @@ public class FritzBox extends BoxClass {
 					dial_query = dial_query.replace("#", "%23"); // # %23
 					dial_query = dial_query.replace("*", "%2A"); // * %2A
 					fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + dial_query);
+				} else {
+					log.debug("doCall: Firmware is greater/or equal than 07.08");
+
+					if (hasDialportChanged(port)) {
+						log.debug("doCall: Setting dialing port to " + port.getDialPort());
+						generateDoCallPostDataDialPortLua(postdata, port.getDialPort());
+						String response = fbc.postToPageAndGetAsString(URL_DATA_LUA, postdata);
+						System.out.println(response);
+					}
+
+					String dial_query = "useajax=1&xhr=1&dial=" + currentNumber + "&orig_port=" + port.getDialPort();
+					dial_query = dial_query.replace("#", "%23"); // # %23
+					dial_query = dial_query.replace("*", "%2A"); // * %2A
+					fbc.getPageAsString(URL_DIAL_FONBOOK_LUA_07_08+ "?" + dial_query);
 				}
 			} catch (InvalidSessionIdException e) {
 				e.printStackTrace();
@@ -1378,12 +1396,15 @@ public class FritzBox extends BoxClass {
 				if (firmware != null && firmware.isLowerThan(4, 21)) {
 					// TODO: message, that firmware does not support the calling feature
 				} else if (firmware != null && firmware.isLowerThan(6, 1)) {
-					log.debug("hangup_Firmware is greater/or equal than 04.21 but lower than 06.1");
+					log.debug("hangup_Firmware is greater/or equal than 04.21 but lower than 06.01");
 					generateHangupPostdata(postdata, port);
 					fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
-				} else {
-					log.debug("hangup_Firmware is greater/or equal than 06.01");
+				} else if (firmware != null && firmware.isLowerThan(7, 8)) {
+					log.debug("hangup_Firmware is greater/or equal than 06.01 but lower than 07.08");
 					fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + "hangup=");
+				} else {
+					log.debug("hangup_Firmware is greater/or equal than 07.08");
+					fbc.getPageAsString(URL_DIAL_FONBOOK_LUA_07_08 + "?" + "hangup=");
 				}
 			} catch (InvalidSessionIdException e) {
 				setBoxDisconnected();
