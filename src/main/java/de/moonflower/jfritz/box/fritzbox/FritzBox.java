@@ -91,6 +91,7 @@ public class FritzBox extends BoxClass {
 	private final static String URL_DIAL_FONBOOK_LUA = "/fon_num/dial_fonbook.lua";
 	private final static String URL_DIAL_FONBOOK_LUA_07_08 = "/fon_num/foncalls_list.lua";
 	private final static String URL_DATA_LUA = "/data.lua";
+	private final static String URL_REBOOT_LUA = "/reboot.lua";
 	private final static String URL_FONBOOK_LIST_LUA = "/fon_num/fonbook_list.lua";
 	private final static String QUERY_DialPort = "telcfg:settings/DialPort";
 
@@ -1338,8 +1339,7 @@ public class FritzBox extends BoxClass {
 					if (hasDialportChanged(port)) {
 						log.debug("doCall: Setting dialing port to " + port.getDialPort());
 						generateDoCallPostDataDialPortLua(postdata, port.getDialPort());
-						String response = fbc.postToPageAndGetAsString(URL_DATA_LUA, postdata);
-						System.out.println(response);
+						fbc.postToPageAndGetAsString(URL_DATA_LUA, postdata);
 					}
 
 					String dial_query = "useajax=1&xhr=1&dial=" + currentNumber + "&orig_port=" + port.getDialPort();
@@ -1450,32 +1450,53 @@ public class FritzBox extends BoxClass {
 		postdata.add(new BasicNameValuePair("logic:command/reboot","../gateway/commands/saveconfig.html"));
 	}
 
+	private List<NameValuePair> generatePrepareRebootPostdata_07_08() {
+		List<NameValuePair> postdata = new ArrayList<>();
+		postdata.add(new BasicNameValuePair("sid", fbc.getSid()));
+		postdata.add(new BasicNameValuePair("xhr", "1"));
+		postdata.add(new BasicNameValuePair("reboot", "1"));
+		postdata.add(new BasicNameValuePair("page", "reboot"));
+		return postdata;
+	}
+
+	private List<NameValuePair>  generateRebootPostdata_07_08() {
+		List<NameValuePair> postdata = new ArrayList<>();
+		postdata.add(new BasicNameValuePair("sid", fbc.getSid()));
+		postdata.add(new BasicNameValuePair("xhr", "1"));
+		postdata.add(new BasicNameValuePair("no_sidrenew", "1"));
+		postdata.add(new BasicNameValuePair("ajax", "1"));
+		return postdata;
+	}
+
 	public void reboot() {
 		if (fbc.isLoggedIn()) {
 			List<NameValuePair> postdata = new ArrayList<NameValuePair>();
 
-			if ((firmware != null) && firmware.isLowerThan(5, 50)) {
-				generateRebootPostdata(postdata);
-				try {
+			try {
+				if ((firmware != null) && firmware.isLowerThan(5, 50)) {
+					generateRebootPostdata(postdata);
 					fbc.postToPageAndGetAsVector(FritzBoxCommunication.URL_WEBCM, postdata);
-				} catch (InvalidSessionIdException e) {
-					setBoxDisconnected();
-					handleInvalidSessionIdException(e);
-				} catch (SocketTimeoutException e) {
-					e.printStackTrace();
-					setBoxDisconnected();
-				} catch (IOException e) {
-					e.printStackTrace();
-					setBoxDisconnected();
-				} catch (LoginBlockedException e) {
-					handleLoginBlockedException(e);
-				} catch (InvalidCredentialsException e) {
-					handleInvalidCredentialsException(e);
-				} catch (PageNotFoundException e) {
-					handlePageNotFoundException(e);
-				} 
-			} else {
-				setRebootUPNP(); // 01.08.2015
+				} else if ((firmware != null) && firmware.isLowerThan(7, 8)) {
+					setRebootUPNP(); // 01.08.2015
+				} else {
+					fbc.postToPageAndGetAsString(URL_DATA_LUA, generatePrepareRebootPostdata_07_08());
+					fbc.postToPageAndGetAsString(URL_REBOOT_LUA, generateRebootPostdata_07_08());
+				}
+			} catch (InvalidSessionIdException e) {
+				setBoxDisconnected();
+				handleInvalidSessionIdException(e);
+			} catch (SocketTimeoutException e) {
+				e.printStackTrace();
+				setBoxDisconnected();
+			} catch (IOException e) {
+				e.printStackTrace();
+				setBoxDisconnected();
+			} catch (LoginBlockedException e) {
+				handleLoginBlockedException(e);
+			} catch (InvalidCredentialsException e) {
+				handleInvalidCredentialsException(e);
+			} catch (PageNotFoundException e) {
+				handlePageNotFoundException(e);
 			}
 		} else {
 			// FIXME show error message that we are currently not connected!!
