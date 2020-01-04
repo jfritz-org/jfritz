@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
+import de.moonflower.jfritz.struct.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.log4j.Logger;
 
@@ -16,11 +17,6 @@ import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.IProgressListener;
-import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.struct.Port;
 import org.jfritz.fboxlib.exceptions.InvalidCredentialsException;
 import org.jfritz.fboxlib.exceptions.LoginBlockedException;
 import org.jfritz.fboxlib.exceptions.PageNotFoundException;
@@ -200,7 +196,7 @@ public class FritzBoxCallList_Pre_04_86 implements BoxCallListInterface {
 				
 				if (port == null)
 				{
-					port = new Port(0, portStr, "-1", "-1");
+					port = new Port(0, PortType.GENERIC, portStr, "-1", "-1");
 				}
 
 				int routeType = Integer.parseInt(response.get(newOffset+6));

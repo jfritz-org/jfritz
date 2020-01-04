@@ -97,10 +97,8 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 	private StatusBarController statusBarController = new StatusBarController();
 
 	private JLabel externalIPLabel, uptimeLabel,
-					dns1Label, dns2Label, voipDnsLabel1, voipDnsLabel2,
-					autoDisconnectLabel, idleTimeLabel,
+					dns1Label, dns2Label,
 					syncDownLabel, syncUpLabel,
-					upnpControlLabel, pppoePassThroughLabel,
 					sendRateLabel, receivedRateLabel,
 					totalSentLabel, totalReceivedLabel;
 
@@ -136,35 +134,29 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		staticInformations.setLayout(new GridBagLayout());
 		dns1Label = new JLabel();
 		dns2Label = new JLabel();
-		voipDnsLabel1 = new JLabel();
-		voipDnsLabel2 = new JLabel();
-		autoDisconnectLabel = new JLabel();
-		idleTimeLabel = new JLabel();
 		syncDownLabel = new JLabel();
 		syncUpLabel = new JLabel();
-		upnpControlLabel = new JLabel();
-		pppoePassThroughLabel = new JLabel();
 
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets.top = 5;
 		c.insets.bottom = 5;
 		c.insets.left = 5;
 		c.insets.right = 5;
-		c.anchor = GridBagConstraints.WEST;
+		c.anchor = GridBagConstraints.EAST;
 
 		c.gridx = 0;
 		c.gridy = 0;
 		staticInformations.add(new JLabel(messages.getMessage("external_ip")), c); //$NON-NLS-1$
+		c.insets.right = 0;
 		c.gridx = c.gridx + 1;
 		c.insets.right = PADDING_RIGHT;
 		staticInformations.add(externalIPLabel, c);
+
 		c.insets.right = 0;
 		c.gridx = c.gridx + 1;
 		staticInformations.add(new JLabel(messages.getMessage("uptime")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
 		staticInformations.add(uptimeLabel, c);
-
-		//TODO: add local ip addresses
 
 		c.gridx = 0;
 		c.gridy = c.gridy + 1;
@@ -173,12 +165,13 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		c.anchor = GridBagConstraints.EAST;
 		c.insets.right = PADDING_RIGHT;
 		staticInformations.add(syncDownLabel, c);
+
 		c.insets.right = 0;
 		c.gridx = c.gridx + 1;
-		c.anchor = GridBagConstraints.WEST;
-		staticInformations.add(new JLabel(messages.getMessage("upnp_control")), c); //$NON-NLS-1$
+		staticInformations.add(new JLabel(messages.getMessage("dns_server_1")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
-		staticInformations.add(upnpControlLabel, c);
+		c.insets.right = 0;
+		staticInformations.add(dns1Label, c);
 
 		c.gridx = 0;
 		c.gridy = c.gridy + 1;
@@ -187,48 +180,13 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		c.anchor = GridBagConstraints.EAST;
 		c.insets.right = PADDING_RIGHT;
 		staticInformations.add(syncUpLabel, c);
+
 		c.insets.right = 0;
 		c.gridx = c.gridx + 1;
-		c.anchor = GridBagConstraints.WEST;
-		staticInformations.add(new JLabel(messages.getMessage("pppoe_passthrough")), c); //$NON-NLS-1$
-		c.gridx = c.gridx + 1;
-		staticInformations.add(pppoePassThroughLabel, c);
-
-		c.gridx = 0;
-		c.gridy = c.gridy + 1;
-		staticInformations.add(new JLabel(messages.getMessage("dns_server_1")), c); //$NON-NLS-1$
-		c.gridx = c.gridx + 1;
-		c.insets.right = PADDING_RIGHT;
-		staticInformations.add(dns1Label, c);
-		c.insets.right = 0;
-		c.gridx = c.gridx + 1;
-		staticInformations.add(new JLabel(messages.getMessage("dns_server_voip_1")), c); //$NON-NLS-1$
-		c.gridx = c.gridx + 1;
-		staticInformations.add(voipDnsLabel1, c);
-
-		c.gridx = 0;
-		c.gridy = c.gridy + 1;
 		staticInformations.add(new JLabel(messages.getMessage("dns_server_2")), c); //$NON-NLS-1$
 		c.gridx = c.gridx + 1;
-		c.insets.right = PADDING_RIGHT;
-		staticInformations.add(dns2Label, c);
 		c.insets.right = 0;
-		c.gridx = c.gridx + 1;
-		staticInformations.add(new JLabel(messages.getMessage("dns_server_voip_2")), c); //$NON-NLS-1$
-		c.gridx = c.gridx + 1;
-		staticInformations.add(voipDnsLabel2, c);
-
-		c.gridx = 0;
-		c.gridy = c.gridy + 1;
-		staticInformations.add(new JLabel(messages.getMessage("auto_disconnect_time")), c); //$NON-NLS-1$
-		c.gridx = c.gridx + 1;
-		staticInformations.add(autoDisconnectLabel, c);
-
-		c.gridx = 0;
-		c.gridy = c.gridy + 1;
-		staticInformations.add(new JLabel(messages.getMessage("connection_idle_time")), c); //$NON-NLS-1$
-		c.gridx = c.gridx + 1;
-		staticInformations.add(idleTimeLabel, c);
+		staticInformations.add(dns2Label, c);
 
 		c.gridx = 0;
 		c.gridy = c.gridy + 1;
@@ -535,10 +493,14 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 
 	private void getStaticUPnPInfos()
 	{
-		JFritz.getBoxCommunication().getBox(0).getInternetStats(this);
-		JFritz.getBoxCommunication().getBox(0).getCommonLinkInfo(this);
-		JFritz.getBoxCommunication().getBox(0).getStatusInfo(this);
-		JFritz.getBoxCommunication().getBox(0).getExternalIPAddress(this);
+		try {
+			JFritz.getBoxCommunication().getBox(0).getInternetStats(this);
+			JFritz.getBoxCommunication().getBox(0).getCommonLinkInfo(this);
+			JFritz.getBoxCommunication().getBox(0).getStatusInfo(this);
+			JFritz.getBoxCommunication().getBox(0).getExternalIPAddress(this);
+		} catch (Exception e) {
+			// nothing to do, ignore silently
+		}
 	}
 
 	/**
@@ -611,69 +573,26 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		dns2Label.setText(dns2);
 	}
 
-	public void setDisconnectInfo(String disconnectTime, String idleTime) {
-		if (disconnectTime.equals("") || idleTime.equals(""))
-		{
-			return;
-		}
-		if (disconnectTime.equals("0"))
-		{
-			autoDisconnectLabel.setText(messages.getMessage("disabled"));
-		}
-		else
-		{
-			autoDisconnectLabel.setText(disconnectTime + " " + messages.getMessage("second_seconds"));
-		}
-		idleTimeLabel.setText(idleTime + " " + messages.getMessage("second_seconds"));
-	}
-
-	public void setOtherInfo(String upnpControl, String routedMode) {
-		if (upnpControl.equals("") || routedMode.equals(""))
-		{
-			return;
-		}
-		if (upnpControl.equals("1")) //$NON-NLS-1$
-		{
-			upnpControlLabel.setText(messages.getMessage("enabled")); //$NON-NLS-1$
-		}
-		else
-		{
-			upnpControlLabel.setText(messages.getMessage("disabled")); //$NON-NLS-1$
-		}
-
-		if (routedMode.equals("1")) //$NON-NLS-1$
-		{
-			pppoePassThroughLabel.setText(messages.getMessage("enabled")); //$NON-NLS-1$
-		}
-		else
-		{
-			pppoePassThroughLabel.setText(messages.getMessage("disabled")); //$NON-NLS-1$
-		}
-	}
-
 	public void setTotalBytesInfo(String sent, String received) {
 		if (sent.equals("") || received.equals(""))
 		{
 			return;
 		}
+		DecimalFormat df = new DecimalFormat("#");
 		if (!sent.equals("-")) //$NON-NLS-1$
 		{
 			long bSent = Long.parseLong(sent);
 			double kSent = bSent / 1000;
 			double mSent = kSent / 1024;
 			double gSent = mSent / 1024;
-			NumberFormat.getInstance().setMinimumFractionDigits(0);
-			NumberFormat.getInstance().setMaximumFractionDigits(1);
-			String kSentStr = NumberFormat.getInstance().format(kSent);
-			String mSentStr = NumberFormat.getInstance().format(mSent);
-			String gSentStr = NumberFormat.getInstance().format(gSent);
+
 			if (gSent < 1.0)
 			{
-				totalSentLabel.setText(kSentStr + " kB (" + mSentStr + " MB)"); //$NON-NLS-1$, //$NON-NLS-2$
+				totalSentLabel.setText(df.format(kSent) + " kB (" + df.format(mSent) + " MB)"); //$NON-NLS-1$, //$NON-NLS-2$
 			}
 			else
 			{
-				totalSentLabel.setText(mSentStr + " MB (" + gSentStr + " GB)"); //$NON-NLS-1$, //$NON-NLS-2$
+				totalSentLabel.setText(df.format(mSent) + " MB (" + df.format(gSent) + " GB)"); //$NON-NLS-1$, //$NON-NLS-2$
 			}
 		}
 		else
@@ -687,29 +606,20 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 			double kReceived = bReceived / 1000;
 			double mReceived = kReceived / 1024;
 			double gReceived = mReceived / 1024;
-			NumberFormat.getInstance().setMinimumFractionDigits(0);
-			NumberFormat.getInstance().setMaximumFractionDigits(1);
-			String kReceivedStr = NumberFormat.getInstance().format(kReceived);
-			String mReceivedStr = NumberFormat.getInstance().format(mReceived);
-			String gReceivedStr = NumberFormat.getInstance().format(gReceived);
+
 			if (gReceived < 1.0)
 			{
-				totalReceivedLabel.setText(kReceivedStr + " kB (" + mReceivedStr + " MB)"); //$NON-NLS-1$, //$NON-NLS-2$
+				totalReceivedLabel.setText(df.format(kReceived) + " kB (" + df.format(mReceived) + " MB)"); //$NON-NLS-1$, //$NON-NLS-2$
 			}
 			else
 			{
-				totalReceivedLabel.setText(mReceivedStr + " MB (" + gReceivedStr + " GB)"); //$NON-NLS-1$, //$NON-NLS-2$
+				totalReceivedLabel.setText(df.format(mReceived) + " MB (" + df.format(gReceived) + " GB)"); //$NON-NLS-1$, //$NON-NLS-2$
 			}
 		}
 		else
 		{
 			totalReceivedLabel.setText(sent);
 		}
-	}
-
-	public void setVoipDNSInfo(String voipDns1, String voipDns2) {
-		voipDnsLabel1.setText(voipDns1);
-		voipDnsLabel2.setText(voipDns2);
 	}
 
 	public void setExternalIp(String externalIp) {
@@ -724,13 +634,11 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		if (!maxDown.equals("-")) //$NON-NLS-1$
 		{
 			int max = Integer.parseInt(maxDown);
-			float kMax = max / 1000;
-			float mMax = kMax / 1024;
-			String kMaxStr = NumberFormat.getInstance().format(kMax);
-			NumberFormat.getInstance().setMinimumFractionDigits(0);
-			NumberFormat.getInstance().setMaximumFractionDigits(1);
-			String mMaxStr = NumberFormat.getInstance().format(mMax);
-			syncDownLabel.setText(kMaxStr + " kbit/s (" + mMaxStr + " Mbit/s)"); //$NON-NLS-1$, //$NON-NLS-2$
+			float kMax = max;
+			float mMax = kMax / 1000;
+
+			DecimalFormat df = new DecimalFormat("#");
+			syncDownLabel.setText(df.format(kMax) + " kbit/s (" + df.format(mMax) + " Mbit/s)"); //$NON-NLS-1$, //$NON-NLS-2$
 		}
 		else
 		{
@@ -746,13 +654,11 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 		if (!maxUp.equals("-")) //$NON-NLS-1$
 		{
 			int max = Integer.parseInt(maxUp);
-			float kMax = max / 1000;
+			float kMax = max;
 			float mMax = kMax / 1024;
-			String kMaxStr = NumberFormat.getInstance().format(kMax);
-			NumberFormat.getInstance().setMinimumFractionDigits(0);
-			NumberFormat.getInstance().setMaximumFractionDigits(1);
-			String mMaxStr = NumberFormat.getInstance().format(mMax);
-			syncUpLabel.setText(kMaxStr + " kbit/s (" + mMaxStr + " Mbit/s)"); //$NON-NLS-1$, //$NON-NLS-2$
+
+			DecimalFormat df = new DecimalFormat("#");
+			syncUpLabel.setText(df.format(kMax) + " kbit/s (" + df.format(mMax) + " Mbit/s)"); //$NON-NLS-1$, //$NON-NLS-2$
 		}
 		else
 		{

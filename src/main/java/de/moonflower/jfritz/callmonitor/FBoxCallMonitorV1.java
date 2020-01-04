@@ -4,16 +4,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Vector;
 
+import de.moonflower.jfritz.struct.*;
 import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -100,7 +97,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
                 Call currentCall = new Call(CallType.CALLIN,
                         new SimpleDateFormat("dd.MM.yy HH:mm:ss")
                                 .parse(split[0]), new PhoneNumberOld(this.properties, number, false),
-                                new Port(0, "", "-1", "-1"), provider, 0);
+                                new Port(0, PortType.GENERIC, "", "-1", "-1"), provider, 0);
                 JFritz.getCallMonitorList().addNewCall(
                         Integer.parseInt(split[2]), currentCall);
             } catch (ParseException e) {
@@ -142,7 +139,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
 				}
             } catch (NumberFormatException nfe)
             {
-            	port = new Port(0, "", "-1", "-1");
+            	port = new Port(0, PortType.GENERIC, "", "-1", "-1");
             }
             try {
                 Call currentCall = new Call(CallType.CALLOUT,
@@ -175,7 +172,7 @@ public class FBoxCallMonitorV1 extends FBoxCallMonitor {
 				}
             } catch (NumberFormatException nfe)
             {
-            	port = new Port(0, "", "-1", "-1");
+            	port = new Port(0, PortType.GENERIC, "", "-1", "-1");
             }
             if (split[4].equals("")) { //$NON-NLS-1$
                 number = messages.getMessage("unknown"); //$NON-NLS-1$

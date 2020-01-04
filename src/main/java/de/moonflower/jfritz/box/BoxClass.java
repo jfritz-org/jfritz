@@ -17,7 +17,8 @@ public abstract class BoxClass
 			   BoxUPnPStatisticsInterface,
 			   BoxPortsInterface,
 			   BoxDoCallInterface,
-			   BoxNewIpInterface
+			   BoxNewIpInterface,
+			   BoxTR064Interface
 {
 	private Vector<BoxStatusListener> boxListener;
 

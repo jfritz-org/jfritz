@@ -52,7 +52,7 @@ public class Call implements Serializable {
 
 		if (port == null)
 		{
-			this.port = new Port(-1, "", "-1", "-1");
+			this.port = new Port(-1, PortType.GENERIC, "", "-1", "-1");
 		}
 
 		// fix so that an empty number doesnt get linked to an empty entry in

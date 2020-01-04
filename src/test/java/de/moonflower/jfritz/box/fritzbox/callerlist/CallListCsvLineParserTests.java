@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import de.moonflower.jfritz.struct.PortType;
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -367,7 +368,7 @@ public class CallListCsvLineParserTests {
 	@Test
 	public void portKnown() throws FeatureNotSupportedByFirmware {
 		// preconditions
-		Port mockedPort = new Port(1, "Portname", "dialPort", "internal Number");
+		Port mockedPort = new Port(1, PortType.GENERIC, "Portname", "dialPort", "internal Number");
 		when(mockedFritzBox.getConfiguredPort(1)).thenReturn(mockedPort);
 
 		// test

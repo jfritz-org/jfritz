@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
@@ -36,6 +37,7 @@ import de.moonflower.jfritz.network.NetworkStateMonitor;
 import de.moonflower.jfritz.properties.PropertyProvider;
 import de.moonflower.jfritz.struct.PhoneNumberOld;
 import de.moonflower.jfritz.struct.Port;
+import de.moonflower.jfritz.struct.PortType;
 import de.moonflower.jfritz.utils.CallPendingDialog;
 import de.moonflower.jfritz.utils.ComplexJOptionPaneMessage;
 import de.moonflower.jfritz.utils.Debug;
@@ -45,7 +47,6 @@ import de.moonflower.jfritz.utils.Debug;
  *
  */
 public class CallDialog extends JDialog implements ActionListener {
-	//private final static Logger log = Logger.getLogger(CallDialog.class);
 	private static final long serialVersionUID = 1;
 
 	private Vector<PhoneNumberOld> numbers;
@@ -156,29 +157,77 @@ public class CallDialog extends JDialog implements ActionListener {
 				((JComboBox) cboNumber).setEditable(true);
 			}
 			topPane.add((Component) cboNumber, c);
+
+			boolean is2FAenabled = true;
+			String currentDialPort = "";
+			try {
+				 is2FAenabled = JFritz.getBoxCommunication().getBox(0).is2FAenabled();
+				 currentDialPort = JFritz.getBoxCommunication().getBox(0).getDialPort();
+			} catch (IOException e) {
+			} catch (NoSuchFieldException e) {
+			}
+
 			c.gridy = 2;
-			label = new JLabel(messages.getMessage("extension")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
-			topPane.add(label, c);
+			JLabel labelExtension = new JLabel(messages.getMessage("extension")+": "); //$NON-NLS-1$,  //$NON-NLS-2$
+			topPane.add(labelExtension, c);
 
 			portComboBox = new JComboBox<Port>();
 
-			Vector<Port> ports = NetworkStateMonitor.getAvailablePorts();
+			Vector<Port> ports = filterCallPorts(NetworkStateMonitor.getAvailablePorts());
 
-			//make sure the firmware was correctly detected
-			if(ports != null){
+			Collections.sort(ports);
+
+			if (ports != null){
 				for(int i=0; i < ports.size(); i++)
 				{
-					if ((!"".equals(ports.get(i).getDialPort()))
-						&& (!"-1".equals(ports.get(i).getDialPort())))
+					Port port = ports.get(i);
+					if ((!"".equals(port.getDialPort()))
+						&& (!"-1".equals(port.getDialPort())))
 					{
-						Port port = ports.get(i);
-						portComboBox.addItem(port);
+						try {
+							int dialPortAsInt = Integer.parseInt(port.getDialPort());
+							portComboBox.addItem(port);
+							if (port.getName().equals(currentDialPort)) {
+								portComboBox.setSelectedItem(port);
+							}
+						} catch (NumberFormatException e) {
+						}
 					}
 				}
 			}
 
             portComboBox.setPreferredSize(new Dimension(230, 32));
 			topPane.add(portComboBox, c);
+
+			c.gridwidth = 2;
+			c.gridy = 3;
+			JLabel labelTwoFactor1 = new JLabel(messages.getMessage("two_factor_no_change_of_port_possible"));
+			topPane.add(labelTwoFactor1, c);
+			c.gridy = 4;
+			JLabel labelTwoFactor2 = new JLabel(messages.getMessage("two_factor_disable_1"));
+			topPane.add(labelTwoFactor2, c);
+			c.gridy = 5;
+			JLabel labelTwoFactor3 = new JLabel(messages.getMessage("two_factor_disable_2"));
+			topPane.add(labelTwoFactor3, c);
+			c.gridy = 6;
+			JLabel labelTwoFactor4 = new JLabel(messages.getMessage("two_factor_disable_3"));
+			topPane.add(labelTwoFactor4, c);
+
+			if (is2FAenabled) {
+				labelExtension.setEnabled(false);
+				portComboBox.setEnabled(false);
+				labelTwoFactor1.setVisible(true);
+				labelTwoFactor2.setVisible(true);
+				labelTwoFactor3.setVisible(true);
+				labelTwoFactor4.setVisible(true);
+			} else {
+				labelExtension.setEnabled(true);
+				portComboBox.setEnabled(true);
+				labelTwoFactor1.setVisible(false);
+				labelTwoFactor2.setVisible(false);
+				labelTwoFactor3.setVisible(false);
+				labelTwoFactor4.setVisible(false);
+			}
 
 			// Bottom Pane
 			okButton = new JButton(messages.getMessage("call")); //$NON-NLS-1$
@@ -209,30 +258,25 @@ public class CallDialog extends JDialog implements ActionListener {
 			getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "ESCAPE"); //$NON-NLS-1$
 			getRootPane().getActionMap().put("ESCAPE", escapeAction); //$NON-NLS-1$
 
-			if (portComboBox.getItemCount() > 0)
-			{
-				try {
-					int lastPort = Integer.parseInt(properties.getStateProperty("calldialog.lastport"));
-					if (portComboBox.getItemCount() > lastPort)
-					{
-						portComboBox.setSelectedIndex(lastPort);
-					}
-					else
-					{
-						portComboBox.setSelectedIndex(0);
-					}
-				} catch (NumberFormatException nfe)
-				{
-					portComboBox.setSelectedIndex(0);
-				}
-			}
-
 			getContentPane().add(topPane, BorderLayout.NORTH);
 			getContentPane().add(bottomPane, BorderLayout.SOUTH);
-			setSize(new Dimension(400, 170));
-
+			if (is2FAenabled) {
+				this.pack();
+//				setSize(new Dimension(600, 270));
+			} else {
+				setSize(new Dimension(400, 170));
+			}
 		}
+	}
 
+	private Vector<Port> filterCallPorts(Vector<Port> availablePorts) {
+		Vector<Port> result = new Vector();
+		for (Port p: availablePorts) {
+			if (p.getType() != PortType.VOIP) {
+				result.add(p);
+			}
+		}
+		return result;
 	}
 
 	/**

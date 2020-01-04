@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import de.moonflower.jfritz.struct.*;
 import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
@@ -11,10 +12,6 @@ import de.moonflower.jfritz.dialogs.sip.SipProvider;
 import de.moonflower.jfritz.exceptions.FeatureNotSupportedByFirmware;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 public class CallListCsvLineParser {
@@ -180,7 +177,7 @@ public class CallListCsvLineParser {
 		}
 
 		if (port == null) {
-			port = new Port(0, portStr, "-1", "-1");
+			port = new Port(0, PortType.GENERIC, portStr, "-1", "-1");
 		}
 
 		return port;

@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import de.moonflower.jfritz.struct.PortType;
 import junit.framework.TestCase;
 
 import org.junit.After;
@@ -108,7 +109,7 @@ public class FBoxListenerV3Test extends TestCase {
     	int sipId = 0;
     	int portId = 0;
     	int callId = 2;
-		Port port = new Port(0, "", "-1", "-1");
+		Port port = new Port(0, PortType.GENERIC, "", "-1", "-1");
 
     	initWhenRules(sipId, portId, port);
 
@@ -129,7 +130,7 @@ public class FBoxListenerV3Test extends TestCase {
     	int sipId = 0;
     	int portId = 0;
     	int callId = 2;
-		Port port = new Port(0, "", "-1", "-1");
+		Port port = new Port(0, PortType.GENERIC, "", "-1", "-1");
 
     	initWhenRules(sipId, portId, port);
 
@@ -152,8 +153,8 @@ public class FBoxListenerV3Test extends TestCase {
     	int portId1 = 1;
     	int callId1 = 1;
     	int callId2 = 2;
-		Port port4 = new Port(0, "", "-1", "-1");
-		Port port1 = new Port(0, "", "-1", "-1");
+		Port port4 = new Port(0, PortType.GENERIC, "", "-1", "-1");
+		Port port1 = new Port(0, PortType.GENERIC, "", "-1", "-1");
 
     	initWhenRules(sipId, portId4, port4, portId1, port1);
 

@@ -7,14 +7,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 
+import de.moonflower.jfritz.struct.*;
 import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.callerlist.CallerTable;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -235,7 +232,7 @@ public class CSVCallerListImport extends CSVImport implements ICSVImport {
 				}
 			}
 		} else if (columnName.equals(CallerTable.COLUMN_PORT)) {
-			entry.setPort(new Port(0, value, "-1", "-1"));
+			entry.setPort(new Port(0, PortType.GENERIC, value, "-1", "-1"));
 		} else if (columnName.equals(CallerTable.COLUMN_DURATION)) {
 			try {
 				if (value.equals(""))
