@@ -3,7 +3,7 @@
 
     <groupId>org.jfritz</groupId>
     <artifactId>jfritz</artifactId>
-    <version>0.7.6</version>
+    <version>0.7.7</version>
     <packaging>jar</packaging>
     <description>A program to communicate with your FRITZ!Box</description>
 
@@ -27,7 +27,8 @@
 
         <version.proxy>1.0.2</version.proxy>
         <version.fboxlib>1.0.26</version.fboxlib>
-        <version.reverseLookup>1.0.10</version.reverseLookup>
+        <version.reverseLookup>1.0.11</version.reverseLookup>
+        <version.FritzTR064>0.9.3</version.FritzTR064>
 
         <version.httpClient>4.5.3</version.httpClient>
         <version.commonsIo>2.4</version.commonsIo>
@@ -72,6 +73,12 @@
             <groupId>org.jfritz</groupId>
             <artifactId>reverseLookup</artifactId>
             <version>${version.reverseLookup}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.bausdorf.fritz</groupId>
+            <artifactId>FritzTR064</artifactId>
+            <version>${version.FritzTR064}</version>
         </dependency>
 
         <dependency>

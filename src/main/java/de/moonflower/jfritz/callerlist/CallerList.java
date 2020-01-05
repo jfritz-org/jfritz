@@ -25,6 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import de.moonflower.jfritz.struct.*;
 import org.apache.log4j.Logger;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
@@ -45,12 +46,6 @@ import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.phonebook.PhoneBook;
 import de.moonflower.jfritz.phonebook.PhoneBookListener;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.IProgressListener;
-import de.moonflower.jfritz.struct.Person;
-import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
 import de.moonflower.jfritz.utils.reverselookup.IReverseLookupFinishedWithResultListener;
@@ -908,7 +903,7 @@ public class CallerList extends AbstractTableModel
 		if (numbers.size() > 0) {
 			Call result = new Call(CallType.CALLIN,
 					new Date(0), new PhoneNumberOld(this.properties, "", false),
-					new Port(0, "", "-1", "-1"), "route", 0);
+					new Port(0, PortType.GENERIC, "", "-1", "-1"), "route", 0);
 			for (PhoneNumberOld num:numbers)
 			{
 				if ("main".equals(num.getType())){
@@ -1185,7 +1180,7 @@ public class CallerList extends AbstractTableModel
 		// TODO: change the order of the Call constructor to fit
 		// the oder of the csv export function or vice versa!!!
 		call = new Call(calltype, calldate, number,
-				new Port(0, field[5], "-1", "-1"),
+				new Port(0, PortType.GENERIC, field[5], "-1", "-1"),
 				field[4], Integer.parseInt(field[6]));
 
 		// TODO: perhaps split export function into two functions
@@ -1283,7 +1278,7 @@ public class CallerList extends AbstractTableModel
 
 		// make the call object and exit
 		call = new Call(calltype, calldate, number,
-				new Port(0, field[3], "-1", "-1"),
+				new Port(0, PortType.GENERIC, field[3], "-1", "-1"),
 				field[4], Integer.parseInt(time[0])
 				* 3600 + Integer.parseInt(time[1]) * 60);
 
@@ -1356,7 +1351,7 @@ public class CallerList extends AbstractTableModel
 
 		// make the call object and exit
 		call = new Call(calltype, calldate, number,
-				new Port(0, field[4], "-1", "-1"),
+				new Port(0, PortType.GENERIC, field[4], "-1", "-1"),
 				field[5], Integer.parseInt(time[0])
 				* 3600 + Integer.parseInt(time[1]) * 60);
 
@@ -1442,7 +1437,7 @@ public class CallerList extends AbstractTableModel
 
 		// make the call object and exit
 		call = new Call(calltype, calldate, number,
-				new Port(0, field[3], "-1", "-1"),
+				new Port(0, PortType.GENERIC, field[3], "-1", "-1"),
 				field[4], Integer.parseInt(time[0])
 				* 3600 + Integer.parseInt(time[1]) * 60);
 
@@ -1564,7 +1559,7 @@ public class CallerList extends AbstractTableModel
 
 		// make the call object and exit
 		call = new Call(calltype, calldate, number,
-				new Port(0, field[4], "-1", "-1"),
+				new Port(0, PortType.GENERIC, field[4], "-1", "-1"),
 				field[5], Integer.parseInt(time[0])
 				* 3600 + Integer.parseInt(time[1]) * 60);
 

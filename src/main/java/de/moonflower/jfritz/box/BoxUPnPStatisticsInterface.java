@@ -5,9 +5,11 @@ import de.moonflower.jfritz.utils.network.UPNPCommonLinkPropertiesListener;
 import de.moonflower.jfritz.utils.network.UPNPExternalIpListener;
 import de.moonflower.jfritz.utils.network.UPNPStatusInfoListener;
 
+import java.io.IOException;
+
 public interface BoxUPnPStatisticsInterface {
-	public void getInternetStats(UPNPAddonInfosListener listener);
-	public void getStatusInfo(UPNPStatusInfoListener listener);
-	public void getExternalIPAddress(UPNPExternalIpListener listener);
-	public void getCommonLinkInfo(UPNPCommonLinkPropertiesListener listener);
+	void getInternetStats(UPNPAddonInfosListener listener) throws NoSuchFieldException, IOException;
+	void getStatusInfo(UPNPStatusInfoListener listener) throws IOException, NoSuchFieldException;
+	void getExternalIPAddress(UPNPExternalIpListener listener) throws IOException, NoSuchFieldException;
+	void getCommonLinkInfo(UPNPCommonLinkPropertiesListener listener) throws IOException, NoSuchFieldException;
 }

@@ -84,7 +84,7 @@ public class PropertyProvider {
 	{
 		JFritzProperties defProps = new JFritzProperties();
 		// Default properties
-		defProps.setProperty("area.code", "721");//$NON-NLS-1$, //$NON-NLS-2$
+		defProps.setProperty("area.code", "89");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("area.prefix", "0");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("backup.path", ".");//$NON-NLS-1$, //$NON-NLS-2$
 		defProps.setProperty("box.address", "fritz.box");//$NON-NLS-1$, //$NON-NLS-2$

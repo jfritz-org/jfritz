@@ -1,4 +1,23 @@
-﻿JFritz 0.7.6:
+﻿JFritz 0.7.7:
+- Fixed some errors in Reverselookup for
+  - Austria
+  - Germany
+  - Sweden
+  - Switzerland
+- Fixed reboot for firmware > 07.08
+- Fixed call dialog / dial assist
+
+New Strings:
+box.could_not_get_status_from_UPNP
+box.no_upnp_communication
+box.invalid_upnp_response
+two_factor_no_change_of_port_possible
+two_factor_disable_1
+two_factor_disable_2
+two_factor_disable_3
+
+
+JFritz 0.7.6:
 - Neu: Support Java 9
 - Bugfix: Funktioniert mit der Firmware-Versionen 06.90
 - Änderung: Exportieren / Drucken der Anrufliste funktioniert nicht mehr

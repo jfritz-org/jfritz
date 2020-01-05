@@ -3,16 +3,13 @@ package de.moonflower.jfritz;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.moonflower.jfritz.struct.*;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.PatternLayout;
 
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.struct.Port;
 
 public class TestHelper {
 
@@ -58,7 +55,7 @@ public class TestHelper {
 	}
 
 	private static Port createTestPort() {
-		return new Port(0, "PortName", "10", "610");
+		return new Port(0, PortType.GENERIC, "PortName", "10", "610");
 	}
 
 	private static String createTestRoute() {

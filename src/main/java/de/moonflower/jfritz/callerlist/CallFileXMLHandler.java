@@ -10,16 +10,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
+import de.moonflower.jfritz.struct.*;
 import org.apache.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.Debug;
 
 /**
@@ -128,12 +125,10 @@ public class CallFileXMLHandler extends DefaultHandler {
 				try {
 					int portId = Integer.parseInt(portStr);
 					port = Port.getPort(portId);
-				} catch (NumberFormatException nfe)
-				{
-					port = new Port(0, portStr, "-1", "-1");
+				} catch (NumberFormatException nfe) {
+					port = new Port(0, PortType.GENERIC, portStr, "-1", "-1");
 				}
-				newCalls.add(new Call(calltype, calldate, number, port, route, duration,
-						comment));
+				newCalls.add(new Call(calltype, calldate, number, port, route, duration, comment));
 			}
 
 		}

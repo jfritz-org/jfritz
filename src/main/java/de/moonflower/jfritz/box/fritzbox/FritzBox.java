@@ -1,27 +1,17 @@
 package de.moonflower.jfritz.box.fritzbox;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
 import javax.swing.JOptionPane;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 
+import de.bausdorf.avm.tr064.*;
+import de.moonflower.jfritz.struct.*;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 import de.moonflower.jfritz.Main;
 import de.moonflower.jfritz.box.BoxCallBackListener;
@@ -43,14 +33,9 @@ import de.moonflower.jfritz.exceptions.InvalidFirmwareException;
 import de.moonflower.jfritz.exceptions.WrongPasswordException;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.IProgressListener;
-import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.ComplexJOptionPaneMessage;
 import de.moonflower.jfritz.utils.Debug;
 import de.moonflower.jfritz.utils.JFritzUtils;
-import de.moonflower.jfritz.utils.network.AddonInfosXMLHandler;
 import de.moonflower.jfritz.utils.network.UPNPAddonInfosListener;
 import de.moonflower.jfritz.utils.network.UPNPCommonLinkPropertiesListener;
 import de.moonflower.jfritz.utils.network.UPNPExternalIpListener;
@@ -89,6 +74,9 @@ public class FritzBox extends BoxClass {
 
 // 31.07.2015 Wahl per Lua
 	private final static String URL_DIAL_FONBOOK_LUA = "/fon_num/dial_fonbook.lua";
+	private final static String URL_DIAL_FONBOOK_LUA_07_08 = "/fon_num/foncalls_list.lua";
+	private final static String URL_DATA_LUA = "/data.lua";
+	private final static String URL_REBOOT_LUA = "/reboot.lua";
 	private final static String URL_FONBOOK_LIST_LUA = "/fon_num/fonbook_list.lua";
 	private final static String QUERY_DialPort = "telcfg:settings/DialPort";
 
@@ -98,31 +86,11 @@ public class FritzBox extends BoxClass {
 
 	//the following are strings used by the web services on the box
 	//from XX.04.33 onwards
-	private static String URL_SERVICE_ADDONINFOS = ":49000/upnp/control/WANCommonIFC1";  //$NON-NLS-1$
-	private static String URN_SERVICE_ADDONINFOS = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetAddonInfos"; //$NON-NLS-1$
-	private static String URL_SERVICE_DSLLINK = ":49000/upnp/control/WANDSLLinkC1";
-	private static String URN_SERVICE_DSLLINK = "urn:schemas-upnp-org:service:WANDSLLinkConfig:1#GetDSLLinkInfo";
-	private static String URL_SERVICE_EXTERNALIP = ":49000/upnp/control/WANIPConn1";
-	private static String URN_SERVICE_EXTERNALIP = "urn:schemas-upnp-org:service:WANIPConnection:1#GetExternalIPAddress";
-	private static String URL_SERVICE_STATUSINFO = ":49000/upnp/control/WANIPConn1";
-	private static String URN_SERVICE_STATUSINFO = "urn:schemas-upnp-org:service:WANIPConnection:1#GetStatusInfo";
-	private static String URL_SERVICE_COMMONLINK= ":49000/upnp/control/WANCommonIFC1";
-	private static String URN_SERVICE_COMMONLINK = "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1#GetCommonLinkProperties";
-	private static String URL_SERVICE_GETINFO = ":49000/upnp/control/any";
-	private static String URN_SERVICE_GETINFO = "urn:schemas-any-com:service:Any:1#GetInfo";
-	private static String URL_SERVICE_AUTOCONFIG = ":49000/upnp/control/WANDSLLinkC1";
-	private static String URN_SERVICE_AUTOCONFIG = "urn:schemas-upnp-org:service:WANDSLLinkConfig:1#GetAutoConfig";
-	private static String URL_SERVICE_CONNECTIONTYPEINFO = ":49000/upnp/control/WANIPConn1";
-	private static String URN_SERVICE_CONNECTIONTYPEINFO = "urn:schemas-upnp-org:service:WANIPConnection:1#GetConnectionTypeInfo";
-	private static String URL_SERVICE_GENERICPORTMAPPING = ":49000/upnp/control/WANIPConn1";
-	private static String URN_SERVICE_GENERICPORTMAPPING = "urn:schemas-upnp-org:service:WANIPConnection:1#GetGenericPortMappingEntry";
 	private static String URL_SERVICE_FORCETERMINATION = ":49000/upnp/control/WANIPConn1";
 	private static String URN_SERVICE_FORCETERMINATION = "urn:schemas-upnp-org:service:WANIPConnection:1#ForceTermination";
 
 	private static String URL_SERVICE_REBOOT = ":49000/upnp/control/deviceconfig"; // 01.08.2015
 	private static String URN_SERVICE_REBOOT = "urn:dslforum-org:service:DeviceConfig:1#Reboot"; // 01.08.2015
-	private static String URL_SERVICE_CREATEURLSID = ":49000/upnp/control/deviceconfig"; // 01.08.2015
-	private static String URN_SERVICE_CREATEURLSID = "urn:dslforum-org:service:DeviceConfig:1#X_AVM-DE_CreateUrlSID"; // 01.08.2015
 
 	private static int max_retry_count = 2;
 
@@ -141,6 +109,8 @@ public class FritzBox extends BoxClass {
 
 	private BoxCallListInterface callList;
 	private boolean shouldPopupLoginCredentials = true;
+
+	private FritzConnection fritzTR064Connection;
 	
 	public FritzBox(String name, String description,
 					String protocol, String address, String port, boolean useUsername, String username, String password)
@@ -164,6 +134,7 @@ public class FritzBox extends BoxClass {
 		} else {
 			this.address = address;
 		}
+		fritzTR064Connection = new FritzConnection(this.address, 49000, this.username, this.password);
 	}
 
 	public void init(boolean shouldPopupLoginCredentials) {
@@ -180,6 +151,18 @@ public class FritzBox extends BoxClass {
 		} catch (IOException e) {
 			log.error(messages.getMessage("box.not_found"));
 			setBoxDisconnected();
+		}
+
+		initTR064Connection();
+	}
+
+	private void initTR064Connection() {
+		try {
+			fritzTR064Connection.init(null);
+		} catch (IOException e) {
+			log.error(messages.getMessage("box.no_upnp_communication"));
+		} catch (ParseException e) {
+			log.error(messages.getMessage("box.invalid_upnp_response"));
 		}
 	}
 
@@ -329,24 +312,6 @@ public class FritzBox extends BoxClass {
 		return fbc.getLoginMode();
 	}
 
-	public String getLastLoginUserName() {
-		return fbc.getLastUserName();
-	}
-
-	public String getPageAsString(final String url) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
-		if (fbc.isLoggedIn()) {
-			try {
-				return fbc.getPageAsString(url);
-			} catch (InvalidSessionIdException e) {
-				setBoxDisconnected();
-				handleInvalidSessionIdException(e);
-				return "";
-			}
-		} else {
-			return "";
-		}
-	}
-
 	public String postToPageAndGetAsString(final String url, List<NameValuePair> params) throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
 		if (fbc.isLoggedIn()) {
 			try {
@@ -375,7 +340,7 @@ public class FritzBox extends BoxClass {
 		}
 	}
 
-	public final Vector<String> getQuery(Vector<String> queries) //throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException
+	public final Vector<String> getQuery(Vector<String> queries)
 	{
 		// FIXME throw exceptions!!!! 
 		Vector<String> result = new Vector<String>();
@@ -482,7 +447,7 @@ public class FritzBox extends BoxClass {
 		Collection<Port> collection = configuredPorts.values();
 		for (Port port: collection)
 		{
-			Port cloned = new Port(port.getId(), port.getName(), port.getDialPort(), port.getInternalNumber());
+			Port cloned = new Port(port.getId(), port.getType(), port.getName(), port.getDialPort(), port.getInternalNumber());
 			cloned.setBox(this);
 			ports.add(cloned);
 		}
@@ -528,7 +493,8 @@ public class FritzBox extends BoxClass {
 							String analogName = response.get(i+0);
 							if (!"".equals(analogName) && !"er".equals(analogName))
 							{
-								Port port = new Port(i, analogName, Integer.toString(i+1), Integer.toString(i+1));
+								String dialPort = Integer.toString(i+1);
+								Port port = new Port(i, PortType.ANALOG, "FON" + dialPort + ": " + analogName, dialPort, Integer.toString(i+1));
 								log.debug("addAnalogPorts: Adding port " + port.toStringDetailed());
 								addConfiguredPort(port);
 							}
@@ -565,7 +531,7 @@ public class FritzBox extends BoxClass {
 
 				if (isdnCount > 0)
 				{
-					addConfiguredPort(new Port(50, messages.getMessage("isdn_telephones_all"), "50", "50"));
+					addConfiguredPort(new Port(50, PortType.GENERIC, messages.getMessage("isdn_telephones_all"), "50", "50"));
 
 					query.clear();
 					for (int i=0; i<isdnCount; i++)
@@ -591,10 +557,10 @@ public class FritzBox extends BoxClass {
 								} else {
 									if ("".equals(name)) // if name is empty:
 									{
-										name = "ISDN " + Integer.toString(i+1);
+										name = Integer.toString(i+1);
 									}
 
-									Port port = new Port(50+(i+1), name, "5"+(i+1), "5"+(i+1));
+									Port port = new Port(50+(i+1), PortType.ISDN, "ISDN: " + name, "5"+(i+1), "5"+(i+1));
 									log.debug("addIsdnPorts: Adding port " + port.toStringDetailed());
 									addConfiguredPort(port);
 								}
@@ -664,7 +630,7 @@ public class FritzBox extends BoxClass {
 							if ("".equals(internal)) {
 								log.warn("addDectMiniPorts: internal number is not set. Will not add port");
 							} else {
-								Port port = new Port(10+Integer.parseInt(num), name, "6"+num, internal);
+								Port port = new Port(10+Integer.parseInt(num), PortType.DECT, "DECT: " + name, "6"+num, internal);
 								log.debug("addDectMiniPorts: Adding port " + port.toStringDetailed());
 								addConfiguredPort(port);
 							}
@@ -721,7 +687,7 @@ public class FritzBox extends BoxClass {
 								log.warn("addVoIPPorts: VoIP account '" + voipName + "'is not activated. Will not add port");
 							} else {
 								// Wählhilfe mit VoIP geht zumindest ab 06.03 nicht mehr, ging sie davor? (getestet mit 06.03 und 06.30) Ab welcher FW bis zu welcher?
-								Port port = new Port(20+i, voipName, Integer.toString(20+i), "62"+Integer.toString(i));
+								Port port = new Port(20+i, PortType.VOIP, "VOIP: " + voipName, Integer.toString(20+i), "62"+Integer.toString(i));
 								log.debug("addVoIPPorts: Adding port " + port.toStringDetailed());
 								addConfiguredPort(port);
 							}
@@ -738,14 +704,14 @@ public class FritzBox extends BoxClass {
 	private void addOtherPorts()
 	{
 		// add static configured ports
-		addConfiguredPort(new Port(3, messages.getMessage("call_through"), "-1", "-1"));
-		addConfiguredPort(new Port(4, messages.getMessage("isdn"), "-1", "-1"));
-		addConfiguredPort(new Port(5, messages.getMessage("fax_fon"), "-1", "-1"));
-		addConfiguredPort(new Port(6, messages.getMessage("answering_machine"), "-1", "-1"));
-		addConfiguredPort(new Port(32, messages.getMessage("data_fon_1"), "-1", "-1"));
-		addConfiguredPort(new Port(33, messages.getMessage("data_fon_2"), "-1", "-1"));
-		addConfiguredPort(new Port(34, messages.getMessage("data_fon_3"), "-1", "-1"));
-		addConfiguredPort(new Port(36, messages.getMessage("data_fon_isdn"), "-1", "-1"));
+		addConfiguredPort(new Port(3, PortType.GENERIC, messages.getMessage("call_through"), "-1", "-1"));
+		addConfiguredPort(new Port(4, PortType.ISDN, messages.getMessage("isdn"), "-1", "-1"));
+		addConfiguredPort(new Port(5, PortType.GENERIC, messages.getMessage("fax_fon"), "-1", "-1"));
+		addConfiguredPort(new Port(6, PortType.AM, messages.getMessage("answering_machine"), "-1", "-1"));
+		addConfiguredPort(new Port(32, PortType.GENERIC, messages.getMessage("data_fon_1"), "-1", "-1"));
+		addConfiguredPort(new Port(33, PortType.GENERIC, messages.getMessage("data_fon_2"), "-1", "-1"));
+		addConfiguredPort(new Port(34, PortType.GENERIC, messages.getMessage("data_fon_3"), "-1", "-1"));
+		addConfiguredPort(new Port(36, PortType.GENERIC, messages.getMessage("data_fon_isdn"), "-1", "-1"));
 	}
 
 	/**************************************************************************************
@@ -901,133 +867,88 @@ public class FritzBox extends BoxClass {
 		return sipProvider.getSipProviderByRoute(route);
 	}
 
-	/**************************************************************************************
-	 * Implementation of UPnP-Statistics Interface
-	 **************************************************************************************/
-	/**
-	 * This function calls one of the upnp web services of the box and returns the raw data
-	 * the data returned has the following format
-	 *
-	 * <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
-	 * <u:GetAddonInfosResponse xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1">
-	 * <NewByteSendRate>0</NewByteSendRate>
-	 * <NewByteReceiveRate>0</NewByteReceiveRate>
-	 * <NewPacketSendRate>0</NewPacketSendRate>
-	 * <NewPacketReceiveRate>0</NewPacketReceiveRate>
-	 * <NewTotalBytesSent>0</NewTotalBytesSent>
-	 * <NewTotalBytesReceived>0</NewTotalBytesReceived>
-	 * <NewAutoDisconnectTime>300</NewAutoDisconnectTime>
-	 * <NewIdleDisconnectTime>7</NewIdleDisconnectTime>
-	 * <NewDNSServer1>X.X.X.X</NewDNSServer1>
-	 * <NewDNSServer2>Y.Y.Y.Y</NewDNSServer2>
-	 * <NewVoipDNSServer1>Z.Z.Z.Z</NewVoipDNSServer1>
-	 * <NewVoipDNSServer2>0.0.0.0</NewVoipDNSServer2>
-	 * <NewUpnpControlEnabled>0</NewUpnpControlEnabled>
-	 * <NewRoutedBridgedModeBoth>0</NewRoutedBridgedModeBoth>
-	 * </u:GetAddonInfosResponse>
-	 * </s:Body> </s:Envelope>
-	 *
-	 * @return the raw xml from the web service of the box
-	 */
-	public void getInternetStats(UPNPAddonInfosListener listener){
-
-		String xml =
-	        "<?xml version=\"1.0\"?>\n" +
-	        "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
-	        +"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-	        "<s:Body>" +
-	        "<u:GetAddonInfos xmlns:u=\"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1\"></u:GetAddonInfos>\n"	+
-	        "</s:Body>\n" +
-	        "</s:Envelope>";
-
-		String result = UPNPUtils.getSOAPData(protocol + "://" + getAddress() +
-				URL_SERVICE_ADDONINFOS.replace("upnp", getIgdupnp()), URN_SERVICE_ADDONINFOS, xml); // 01.08.2015
-
-//		Debug.msg("Result of getAddonInfos: "+ result);
-
-		if (!result.equals(""))
-		{
-			try {
-				XMLReader reader = SAXParserFactory.newInstance().newSAXParser()
-						.getXMLReader();
-				reader.setContentHandler(new AddonInfosXMLHandler(listener));
-				reader.parse(new InputSource(new StringReader(result)));
-
-			} catch (ParserConfigurationException e1) {
-				log.error(e1.toString());
-			} catch (SAXException e1) {
-				log.error(e1.toString());
-			} catch (IOException e1) {
-				log.error(e1.toString());
-			}
+	public void getInternetStats(UPNPAddonInfosListener listener) throws NoSuchFieldException, IOException {
+		try {
+			getDataFromWANPPPConnection(listener);
+			getDataFromWANCommonInterfaceConfig(listener);
+		} catch (IOException e) {
+			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+			listener.setDNSInfo("-", "-");
+			throw e;
+		} catch (NoSuchFieldException e) {
+			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+			listener.setDNSInfo("-", "-");
+			throw e;
 		}
 	}
 
-	/**
-	 * This functions contains various web service calls that are not currently
-	 * used but may be used in the future
-	 *
-	 */
-	@SuppressWarnings("unused")
-	private void getWebservice(){
-
-		String xml =
-	        "<?xml version=\"1.0\"?>\n" +
-	        "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
-	        +"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-	        "<s:Body><u:GetDSLLinkInfo xmlns:u=\"urn:schemas-upnp-org:service:WANDSLLinkConfig:1\"></u:GetDSLLinkInfo>\n"	+
-	        "</s:Body>\n" +
-	        "</s:Envelope>";
-
-		UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-				URL_SERVICE_DSLLINK.replace("upnp", getIgdupnp()), URN_SERVICE_DSLLINK, xml); // 01.08.2015
-
-		/*	This is the result of the web service
-			<?xml version="1.0"?>
-			<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
-			<u:GetDSLLinkInfoResponse xmlns:u="urn:schemas-upnp-org:service:WANDSLLinkConfig:1">
-			<NewLinkType>PPPoA</NewLinkType>
-			<NewLinkStatus>Up</NewLinkStatus>
-			</u:GetDSLLinkInfoResponse>
-			</s:Body> </s:Envelope>
-	 	*/
-
-//		Debug.msg("Result of GetDSLLinkInfo: "+ result);
-
+	private void getDataFromWANPPPConnection(UPNPAddonInfosListener listener) throws NoSuchFieldException, IOException {
+		Service service = this.fritzTR064Connection.getService("WANPPPConnection:1");
+		Action action = service.getAction("GetInfo");
+		Response r = synchronizedTR064Call(action);
+		String dnsServers = r.getValueAsString("NewDNSServers");
+		if (dnsServers.contains(",")) {
+			String[] splitted = dnsServers.split(",");
+			listener.setDNSInfo(splitted[0], splitted[1]);
+		} else {
+			listener.setDNSInfo(dnsServers, "-");
+		}
 	}
 
-	public void getStatusInfo(UPNPStatusInfoListener listener)
-	{
-		String xml =
-	        "<?xml version=\"1.0\"?>\n" +
-	        "<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
-	        +"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-	        "<s:Body><u:GetDSLLinkInfo xmlns:u=\"urn:schemas-upnp-org:service:WANDSLLinkConfig:1\"></u:GetDSLLinkInfo>\n"	+
-	        "</s:Body>\n" +
-	        "</s:Envelope>";
+	private void getDataFromWANCommonInterfaceConfig(UPNPAddonInfosListener listener) throws NoSuchFieldException, IOException {
+		Service service = this.fritzTR064Connection.getService("WANCommonInterfaceConfig:1");
+		Action action = service.getAction("GetTotalBytesReceived");
+		Response r = synchronizedTR064Call(action);
+		String bytesReceived =  r.getValueAsString("NewTotalBytesReceived");
 
-		String result = UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-				URL_SERVICE_STATUSINFO.replace("upnp", getIgdupnp()), URN_SERVICE_STATUSINFO, xml); // 01.08.2015
+		action = service.getAction("GetTotalBytesSent");
+		r = synchronizedTR064Call(action);
+		String bytesSent = r.getValueAsString("NewTotalBytesSent");
+		listener.setTotalBytesInfo(bytesSent, bytesReceived);
 
-//		Debug.msg("Result of dsl getStatusInfo: "+ result);
+		Map<String, Object> arguments = new HashMap<String, Object>();
+		arguments.put("NewSyncGroupIndex", 0);
+		action = service.getAction("X_AVM-DE_GetOnlineMonitor");
+		r = synchronizedTR064Call(action, arguments);
+		String upstreamBps = r.getValueAsString("Newus_current_bps");
+		String downstreamBps = r.getValueAsString("Newds_current_bps");
 
-		Pattern p = Pattern.compile("<NewUptime>([^<]*)</NewUptime>");
-		Matcher m = p.matcher(result);
-		if(m.find())
-			listener.setUptime(m.group(1));
-		else
+		listener.setBytesRate(getFirstBpsValue(upstreamBps), getFirstBpsValue(downstreamBps));
+	}
+
+	private String getFirstBpsValue(String commaListBps) {
+		return getBpsValue(commaListBps, 0);
+	}
+
+	private String getBpsValue(String commaListBps, int position) {
+		if (commaListBps.contains(",")) {
+			return splitStringArrayByComma(commaListBps)[position];
+		} else {
+			return commaListBps;
+		}
+	}
+
+	private String[] splitStringArrayByComma(String input) {
+		return input.split(",");
+	}
+
+	public void getStatusInfo(UPNPStatusInfoListener listener) throws IOException, NoSuchFieldException {
+		Service service = this.fritzTR064Connection.getService("WANPPPConnection:1");
+		Action action = service.getAction("GetInfo");
+
+		try {
+			Response r = synchronizedTR064Call(action);
+			String uptime = r.getValueAsString("NewUptime");
+			listener.setUptime(uptime);
+		} catch (IOException e) {
+			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
 			listener.setUptime("-");
-
-		/*
-		<?xml version="1.0"?>
-		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
-		<u:GetStatusInfoResponse xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1">
-		<NewConnectionStatus>Connected</NewConnectionStatus>
-		<NewLastConnectionError>ERROR_NONE</NewLastConnectionError>
-		<NewUptime>3574</NewUptime>
-		</u:GetStatusInfoResponse>
-		</s:Body> </s:Envelope>
-		*/
+			throw e;
+		} catch (NoSuchFieldException e) {
+			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+			listener.setUptime("-");
+			throw e;
+		}
 	}
 
 	/**
@@ -1035,179 +956,47 @@ public class FritzBox extends BoxClass {
 	 *
 	 * @return
 	 */
-	public void getExternalIPAddress(UPNPExternalIpListener listener){
+	public void getExternalIPAddress(UPNPExternalIpListener listener) throws IOException, NoSuchFieldException {
+		Service service = this.fritzTR064Connection.getService("WANPPPConnection:1");
+		Action action = service.getAction("GetExternalIPAddress");
 
-		String xml =
-			"<?xml version=\"1.0\"?>\n" +
-			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
-			+"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-			"<s:Body><u:GetExternalIPAddress xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\">\n" +
-			"<NewExternalIPAddress>0.0.0.0</NewExternalIPAddress>\n" +
-			"</u:GetExternalIPAddress>\n" +
-			"</s:Body>\n" +
-			"</s:Envelope>";
-
-		String result = UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-				URL_SERVICE_EXTERNALIP.replace("upnp", getIgdupnp()), URN_SERVICE_EXTERNALIP, xml);
-
-		/*
-		<?xml version="1.0"?>
-		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
-		<u:GetExternalIPAddressResponse xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1">
-		<NewExternalIPAddress>93.216.135.71</NewExternalIPAddress>
-		</u:GetExternalIPAddressResponse>
-		</s:Body> </s:Envelope>
-		 */
-
-//		Debug.msg("External IP response: "+result);
-
-		Pattern p = Pattern.compile("<NewExternalIPAddress>([^<]*)</NewExternalIPAddress>");
-		Matcher m = p.matcher(result);
-		if(m.find())
-			listener.setExternalIp(m.group(1));
-		else
+		try {
+			Response r = synchronizedTR064Call(action);
+			String ip = r.getValueAsString("NewExternalIPAddress");
+			listener.setExternalIp(ip);
+		} catch (IOException e) {
+			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
 			listener.setExternalIp("-");
+			throw e;
+		} catch (NoSuchFieldException e) {
+			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+			listener.setExternalIp("-");
+			throw e;
+		}
 	}
 
-	public void getCommonLinkInfo(UPNPCommonLinkPropertiesListener listener){
-		String xml =
-			"<?xml version=\"1.0\"?>\n" +
-			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n"
-			+"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-			"<s:Body><u:GetCommonLinkProperties xmlns:u=\"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1\"></u:GetCommonLinkProperties>\n"	+
-			"</s:Body>\n" +
-			"</s:Envelope>";
+	public void getCommonLinkInfo(UPNPCommonLinkPropertiesListener listener) throws NoSuchFieldException, IOException {
+		Service service = this.fritzTR064Connection.getService("WANDSLInterfaceConfig:1");
+		Action action = service.getAction("GetInfo");
 
-		String result =  UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-				URL_SERVICE_COMMONLINK.replace("upnp", getIgdupnp()), URN_SERVICE_COMMONLINK, xml); // 01.08.2015
+		try {
+			Response r = synchronizedTR064Call(action);
+			String downstreamCurrRate = r.getValueAsString("NewDownstreamCurrRate");
+			String upstreamCurrRate = r.getValueAsString("NewUpstreamCurrRate");
 
-//		log.debug("Result of getCommonLinkProperties: "+ result);
-
-		Pattern p = Pattern.compile("<NewLayer1UpstreamMaxBitRate>([^<]*)</NewLayer1UpstreamMaxBitRate>");
-		Matcher m = p.matcher(result);
-		if(m.find())
-			listener.setUpstreamMaxBitRate(m.group(1));
-		else
-			listener.setUpstreamMaxBitRate("-");
-
-		p = Pattern.compile("<NewLayer1DownstreamMaxBitRate>([^<]*)</NewLayer1DownstreamMaxBitRate>");
-		m = p.matcher(result);
-		if(m.find())
-			listener.setDownstreamMaxBitRate(m.group(1));
-		else
+			listener.setDownstreamMaxBitRate(downstreamCurrRate);
+			listener.setUpstreamMaxBitRate(upstreamCurrRate);
+		} catch (IOException e) {
+			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
 			listener.setDownstreamMaxBitRate("-");
-
-		/*  This is the response
-		<?xml version="1.0"?>
-		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
-		<u:GetCommonLinkPropertiesResponse xmlns:u="urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1">
-		<NewWANAccessType>DSL</NewWANAccessType>
-		<NewLayer1UpstreamMaxBitRate>10044000</NewLayer1UpstreamMaxBitRate>
-		<NewLayer1DownstreamMaxBitRate>51384000</NewLayer1DownstreamMaxBitRate>
-		<NewPhysicalLinkStatus>Up</NewPhysicalLinkStatus>
-		</u:GetCommonLinkPropertiesResponse>
-		</s:Body> </s:Envelope>
-		*/
-	}
-
-	@SuppressWarnings("unused")
-	private void getInfo() {
-		String xml =
-			"<?xml version=\"1.0\"?>\n" +
-			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-			"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-			"<s:Body><u:GetInfo xmlns:u=\"urn:schemas-any-com:service:Any:1\"></u:GetInfo>\n" +
-			"</s:Body>\n" +
-			"</s:Envelope>";
-
-			UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-					URL_SERVICE_GETINFO.replace("upnp", getIgdupnp()), URN_SERVICE_GETINFO, xml); // 01.08.2015
-
-			//Debug.info("Result of getInfo: "+ getIgdupnp());
-//		Debug.msg("Result of getInfo: "+ result);
-
-		/*
-		<?xml version="1.0"?>
-		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
-		<u:GetInfoResponse xmlns:u="urn:schemas-any-com:service:Any:1">
-		<NewBoxid>123</NewBoxid>
-		<NewMacaddress>456</NewMacaddress>
-		<NewProductname>FRITZ!Box</NewProductname>
-		<NewHostname></NewHostname>
-		<NewLanguage></NewLanguage>
-		<NewHardwarelist></NewHardwarelist>
-		<NewUsbPluglist></NewUsbPluglist>
-		<NewExtendedInfo></NewExtendedInfo>
-		</u:GetInfoResponse>
-		</s:Body> </s:Envelope>
-		*/
-	}
-	@SuppressWarnings("unused")
-	private void getAutoConfig() {
-		String xml =
-			"<?xml version=\"1.0\"?>\n" +
-			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-			"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-			"<s:Body><u:GetAutoConfig xmlns:u=\"urn:schemas-upnp-org:service:WANDSLLinkConfig:1\"></u:GetAutoConfig>\n" +
-			"</s:Body>\n" +
-			"</s:Envelope>";
-
-		String result =  UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-				URL_SERVICE_AUTOCONFIG.replace("upnp", getIgdupnp()), URN_SERVICE_AUTOCONFIG, xml); // 01.08.2015
-
-		/*
-		<?xml version="1.0"?>
-		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
-		<u:GetAutoConfigResponse xmlns:u="urn:schemas-upnp-org:service:WANDSLLinkConfig:1">
-		<NewAutoConfig>0</NewAutoConfig>
-		</u:GetAutoConfigResponse>
-		</s:Body> </s:Envelope>
-		 */
-	}
-
-	@SuppressWarnings("unused")
-	private void getConnectionTypeInfo() {
-		String xml =
-			"<?xml version=\"1.0\"?>\n" +
-			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-			":encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-			"<s:Body><u:GetConnectionTypeInfo xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\"></u:GetConnectionTypeInfo>\n" +
-			"</s:Body>\n" +
-			"</s:Envelope>";
-
-			UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-					URL_SERVICE_CONNECTIONTYPEINFO.replace("upnp", getIgdupnp()), URN_SERVICE_CONNECTIONTYPEINFO, xml); // 01.08.2015
-
-//		Debug.msg("Result of getConnectionTypeInfo: "+ result);
-
-		/*
-		<?xml version="1.0"?>
-		<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><s:Body>
-		<u:GetConnectionTypeInfoResponse xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1">
-		<NewConnectionType>IP_Routed</NewConnectionType>
-		<NewPossibleConnectionTypes>IP_Routed</NewPossibleConnectionTypes>
-		</u:GetConnectionTypeInfoResponse>
-		</s:Body> </s:Envelope>
-		 */
-	}
-
-	@SuppressWarnings("unused")
-	private void getGenericPortMappingEntry()
-	{
-		String xml =
-			"<?xml version=\"1.0\"?>\n" +
-			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-			"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-			"<s:Body><u:GetGenericPortMappingEntry xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\">\n" +
-			"<NewPortMappingIndex></NewPortMappingIndex>\n" +
-			"</u:GetGenericPortMappingEntry>\n" +
-			"</s:Body>\n" +
-			"</s:Envelope>";
-
-			UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
-					URL_SERVICE_GENERICPORTMAPPING.replace("upnp", getIgdupnp()), URN_SERVICE_GENERICPORTMAPPING, xml); // 01.08.2015
-
-//		Debug.msg("Result of getGenericPortMappingEntry: "+ result);
+			listener.setUpstreamMaxBitRate("-");
+			throw e;
+		} catch (NoSuchFieldException e) {
+			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+			listener.setDownstreamMaxBitRate("-");
+			listener.setUpstreamMaxBitRate("-");
+			throw e;
+		}
 	}
 
 	public void renewIPAddress() {
@@ -1221,25 +1010,6 @@ public class FritzBox extends BoxClass {
 
 		UPNPUtils.getSOAPData(protocol+"://" + getAddress() +
 				URL_SERVICE_FORCETERMINATION.replace("upnp", getIgdupnp()), URN_SERVICE_FORCETERMINATION, xml); // 01.08.2015
-	}
-
-	public String getSIDUPNP() { // 15.08.2015
-		String sSID = "0000000000000000";
-		String xml =
-		"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-		"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-		"s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-		"<s:Body><u:CreateUrlSID xmlns:u=\"urn:dslforum-org:service:DeviceConfig:1\">\n" +
-		"</u:CreateUrlSID>\n" +
-		"</s:Body>\n" +
-		"</s:Envelope>";
-
-		String result = UPNPUtils.getSOAPDataAuth(fbc, protocol+"://" + getAddress() +
-			    URL_SERVICE_CREATEURLSID, URN_SERVICE_CREATEURLSID, xml);
-
-		sSID = result;
-		log.info("Result of DeviceConfig CreateUrlSID: " + result);
-		return sSID;
 	}
 
 	public void setRebootUPNP() { // 15.08.2015
@@ -1267,7 +1037,7 @@ public class FritzBox extends BoxClass {
 	 **************************************************************************************/
 
 	// 01.08.2015
-	public String getQueryDialPort() throws ClientProtocolException, IOException, LoginBlockedException, InvalidCredentialsException, PageNotFoundException {
+	public String getQueryDialPort() {
 		final String FALLBACK_DIAL_PORT = "50";
 		Vector<String> query = new Vector<String>();
 		query.add(QUERY_DialPort);
@@ -1291,6 +1061,8 @@ public class FritzBox extends BoxClass {
 		postdata.add(new BasicNameValuePair("clicktodial", "on"));
 		postdata.add(new BasicNameValuePair("port", port)); // port.getDialPort()
 		postdata.add(new BasicNameValuePair("btn_apply", ""));
+		postdata.add(new BasicNameValuePair("sid", fbc.getSid()));
+		postdata.add(new BasicNameValuePair("page", "telDial"));
 	}
 	
 	private void generateDoCallPostData(List<NameValuePair> postdata, String currentNumber, Port port) {
@@ -1312,11 +1084,11 @@ public class FritzBox extends BoxClass {
 				if (firmware != null && firmware.isLowerThan(4, 21)) {
 					// TODO: message, that firmware does not support the calling feature
 				} else if (firmware != null && firmware.isLowerThan(6, 1)) {
-					log.debug("doCall: Firmware is greater/or equal than 04.21 but lower than 06.1");
+					log.debug("doCall: Firmware is greater/or equal than 04.21 but lower than 06.01");
 					generateDoCallPostData(postdata, currentNumber, port);
 				    fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
-				} else {
-					log.debug("doCall: Firmware is greater/or equal than 06.01");
+				} else if (firmware != null && firmware.isLowerThan(7, 8)){
+					log.debug("doCall: Firmware is greater/or equal than 06.01 but lower than 07.08");
 					
 					if (hasDialportChanged(port)) {
 						log.debug("doCall: Setting dialing port to " + port.getDialPort());
@@ -1328,6 +1100,19 @@ public class FritzBox extends BoxClass {
 					dial_query = dial_query.replace("#", "%23"); // # %23
 					dial_query = dial_query.replace("*", "%2A"); // * %2A
 					fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + dial_query);
+				} else {
+					log.debug("doCall: Firmware is greater/or equal than 07.08");
+
+					if (hasDialportChanged(port)) {
+						log.debug("doCall: Setting dialing port to " + port.getDialPort());
+						generateDoCallPostDataDialPortLua(postdata, port.getDialPort());
+						fbc.postToPageAndGetAsString(URL_DATA_LUA, postdata);
+					}
+
+					String dial_query = "useajax=1&xhr=1&dial=" + currentNumber + "&orig_port=" + port.getDialPort();
+					dial_query = dial_query.replace("#", "%23"); // # %23
+					dial_query = dial_query.replace("*", "%2A"); // * %2A
+					fbc.getPageAsString(URL_DIAL_FONBOOK_LUA_07_08+ "?" + dial_query);
 				}
 			} catch (InvalidSessionIdException e) {
 				e.printStackTrace();
@@ -1378,12 +1163,15 @@ public class FritzBox extends BoxClass {
 				if (firmware != null && firmware.isLowerThan(4, 21)) {
 					// TODO: message, that firmware does not support the calling feature
 				} else if (firmware != null && firmware.isLowerThan(6, 1)) {
-					log.debug("hangup_Firmware is greater/or equal than 04.21 but lower than 06.1");
+					log.debug("hangup_Firmware is greater/or equal than 04.21 but lower than 06.01");
 					generateHangupPostdata(postdata, port);
 					fbc.postToPageAndGetAsString(FritzBoxCommunication.URL_WEBCM, postdata);
-				} else {
-					log.debug("hangup_Firmware is greater/or equal than 06.01");
+				} else if (firmware != null && firmware.isLowerThan(7, 8)) {
+					log.debug("hangup_Firmware is greater/or equal than 06.01 but lower than 07.08");
 					fbc.getPageAsString(URL_FONBOOK_LIST_LUA + "?" + "hangup=");
+				} else {
+					log.debug("hangup_Firmware is greater/or equal than 07.08");
+					fbc.getPageAsString(URL_DIAL_FONBOOK_LUA_07_08 + "?" + "hangup=");
 				}
 			} catch (InvalidSessionIdException e) {
 				setBoxDisconnected();
@@ -1429,32 +1217,53 @@ public class FritzBox extends BoxClass {
 		postdata.add(new BasicNameValuePair("logic:command/reboot","../gateway/commands/saveconfig.html"));
 	}
 
+	private List<NameValuePair> generatePrepareRebootPostdata_07_08() {
+		List<NameValuePair> postdata = new ArrayList<>();
+		postdata.add(new BasicNameValuePair("sid", fbc.getSid()));
+		postdata.add(new BasicNameValuePair("xhr", "1"));
+		postdata.add(new BasicNameValuePair("reboot", "1"));
+		postdata.add(new BasicNameValuePair("page", "reboot"));
+		return postdata;
+	}
+
+	private List<NameValuePair>  generateRebootPostdata_07_08() {
+		List<NameValuePair> postdata = new ArrayList<>();
+		postdata.add(new BasicNameValuePair("sid", fbc.getSid()));
+		postdata.add(new BasicNameValuePair("xhr", "1"));
+		postdata.add(new BasicNameValuePair("no_sidrenew", "1"));
+		postdata.add(new BasicNameValuePair("ajax", "1"));
+		return postdata;
+	}
+
 	public void reboot() {
 		if (fbc.isLoggedIn()) {
 			List<NameValuePair> postdata = new ArrayList<NameValuePair>();
 
-			if ((firmware != null) && firmware.isLowerThan(5, 50)) {
-				generateRebootPostdata(postdata);
-				try {
+			try {
+				if ((firmware != null) && firmware.isLowerThan(5, 50)) {
+					generateRebootPostdata(postdata);
 					fbc.postToPageAndGetAsVector(FritzBoxCommunication.URL_WEBCM, postdata);
-				} catch (InvalidSessionIdException e) {
-					setBoxDisconnected();
-					handleInvalidSessionIdException(e);
-				} catch (SocketTimeoutException e) {
-					e.printStackTrace();
-					setBoxDisconnected();
-				} catch (IOException e) {
-					e.printStackTrace();
-					setBoxDisconnected();
-				} catch (LoginBlockedException e) {
-					handleLoginBlockedException(e);
-				} catch (InvalidCredentialsException e) {
-					handleInvalidCredentialsException(e);
-				} catch (PageNotFoundException e) {
-					handlePageNotFoundException(e);
-				} 
-			} else {
-				setRebootUPNP(); // 01.08.2015
+				} else if ((firmware != null) && firmware.isLowerThan(7, 8)) {
+					setRebootUPNP(); // 01.08.2015
+				} else {
+					fbc.postToPageAndGetAsString(URL_DATA_LUA, generatePrepareRebootPostdata_07_08());
+					fbc.postToPageAndGetAsString(URL_REBOOT_LUA, generateRebootPostdata_07_08());
+				}
+			} catch (InvalidSessionIdException e) {
+				setBoxDisconnected();
+				handleInvalidSessionIdException(e);
+			} catch (SocketTimeoutException e) {
+				e.printStackTrace();
+				setBoxDisconnected();
+			} catch (IOException e) {
+				e.printStackTrace();
+				setBoxDisconnected();
+			} catch (LoginBlockedException e) {
+				handleLoginBlockedException(e);
+			} catch (InvalidCredentialsException e) {
+				handleInvalidCredentialsException(e);
+			} catch (PageNotFoundException e) {
+				handlePageNotFoundException(e);
 			}
 		} else {
 			// FIXME show error message that we are currently not connected!!
@@ -1507,10 +1316,6 @@ public class FritzBox extends BoxClass {
 		String message = "Could not detect firmware!";
 		log.error(message, e);
 		Debug.errDlg(message);
-	}
-
-	public int getMaxRetryCount() {
-		return max_retry_count;
 	}
 
 	public void refreshLogin() {
@@ -1610,5 +1415,50 @@ public class FritzBox extends BoxClass {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public boolean is2FAenabled() throws IOException, NoSuchFieldException {
+		Service service = this.fritzTR064Connection.getService("X_AVM-DE_Auth:1");
+		Action action = service.getAction("GetInfo");
+
+		try {
+			Response r = synchronizedTR064Call(action);
+			return r.getValueAsBoolean("NewEnabled");
+		} catch (IOException e) {
+			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+			initTR064Connection();
+			throw e;
+		} catch (NoSuchFieldException e) {
+			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+			throw e;
+		}
+	}
+
+	@Override
+	public String getDialPort() throws IOException, NoSuchFieldException {
+		Service service = this.fritzTR064Connection.getService("X_VoIP:1");
+		Action action = service.getAction("X_AVM-DE_DialGetConfig");
+
+		try {
+			Response r = synchronizedTR064Call(action);
+			return r.getValueAsString("NewX_AVM-DE_PhoneName");
+		} catch (IOException e) {
+			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+			throw e;
+		} catch (NoSuchFieldException e) {
+			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+			throw e;
+		}
+	}
+
+	private Response synchronizedTR064Call(final Action action) throws IOException {
+		return synchronizedTR064Call(action, (Map) null);
+	}
+
+	private Response synchronizedTR064Call(final Action action, final Map<String, Object> arguments) throws IOException {
+		synchronized (this) {
+			return action.execute(arguments);
+		}
 	}
 }

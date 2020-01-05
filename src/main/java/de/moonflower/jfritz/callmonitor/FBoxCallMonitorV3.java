@@ -5,16 +5,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
+import de.moonflower.jfritz.struct.*;
 import org.apache.log4j.Logger;
 
 import de.moonflower.jfritz.JFritz;
 import de.moonflower.jfritz.box.fritzbox.FritzBox;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.properties.PropertyProvider;
-import de.moonflower.jfritz.struct.Call;
-import de.moonflower.jfritz.struct.CallType;
-import de.moonflower.jfritz.struct.PhoneNumberOld;
-import de.moonflower.jfritz.struct.Port;
 import de.moonflower.jfritz.utils.JFritzUtils;
 
 /**
@@ -145,7 +142,7 @@ public class FBoxCallMonitorV3 extends FBoxCallMonitor {
 	}
 
 	private Port parsePort(final String portStr) {
-		Port port = new Port(0, "", "-1", "-1");
+		Port port = new Port(0, PortType.GENERIC, "", "-1", "-1");
 		if (portStr != null) {
 			try {
 				int portId = Integer.parseInt(portStr);
