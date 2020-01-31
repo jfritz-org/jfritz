@@ -8,7 +8,7 @@
  * Created on 08.04.2005
  *
  * Authors working on the project:
- * 		robotniko	Robert Palmer <robotniko@gmx.de>
+ * 		robotniko	Robert Palmer <robert@jfritz.org>
  *
  * This tool is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
@@ -203,7 +203,7 @@ public class Main  {
 
 	public final static String JFRITZ_PROJECT = "all members of the JFritz-Team";
 
-	public final static String PROJECT_ADMIN = "Robert Palmer <robotniko@users.sourceforge.net>"; //$NON-NLS-1$
+	public final static String PROJECT_ADMIN = "Robert Palmer <robert@jfritz.org>"; //$NON-NLS-1$
 
 	public final static String JFRITZ_HIDDEN_DIR = ".jfritz";
 

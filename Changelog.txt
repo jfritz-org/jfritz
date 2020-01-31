@@ -1,4 +1,22 @@
-﻿JFritz 0.7.7:
+﻿JFritz 0.7.8:
+- Bugfix: enable usage of dial assist if login method is PASSWORD (without an username)
+- Bugfix: Fixed errors with Java 11 or newer
+- Using new version of de.bausdorf.fritz.FritzTR064
+  - Usage of HTTPS for TR064 communication
+- Improved detection of login method using TR064
+- Disable dial assist if TR064 is disabled or login method prohibits usage of it
+- Disable monitoring if TR064 is disabled
+- Improved logging
+
+New Strings:
+enable_tr064
+login_using_button
+login_using_button_1
+login_using_button_2
+login_using_button_3
+login_using_button_4
+
+JFritz 0.7.7:
 - Fixed some errors in Reverselookup for
   - Austria
   - Germany

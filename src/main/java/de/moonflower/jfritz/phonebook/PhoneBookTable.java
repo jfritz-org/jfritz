@@ -60,7 +60,9 @@ public class PhoneBookTable extends JTable implements KeyListener{
 		getColumnModel().getColumn(1).setMinWidth(60);
 		getColumnModel().getColumn(1).setMaxWidth(60);
 
-		getColumnModel().getColumn(3).setCellEditor(new CallCellEditor());
+		if (JFritz.getBoxCommunication().getBox(0).isDialAssistAvailable()) {
+			getColumnModel().getColumn(3).setCellEditor(new CallCellEditor());
+		}
 
 		getTableHeader().addMouseListener(new ColumnHeaderListener(getModel()));
 

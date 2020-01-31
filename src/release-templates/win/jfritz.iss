@@ -585,7 +585,7 @@ begin
 	       CustomMessage('Send'), 
 	       CustomMessage('Cancel'),
 	       CustomMessage('EMailText1') + #10#13 + CustomMessage('EMailText2'),
-	       'jfritz@robotniko.de', 
+	       'robert@jfritz.org',
 	       CustomMessage('EMailSubject') + ' v{#AppVersion} Rev. {#AppRevision}',
          ' ' 
            + #10#13 
