@@ -14,12 +14,12 @@ public class DetectLoginMethod {
     public static final String PROPERTY_ANONYMOUS_LOGIN_ENABLED = "NewX_AVM-DE_AnonymousLoginEnabled";
     public static final String PROPERTY_BUTTON_LOGIN_ENABLED = "NewX_AVM-DE_ButtonLoginEnabled";
     public static final String ACTION_GET_CURRENT_USER = "X_AVM-DE_GetCurrentUser";
-    public static final String PROPERTY_CURRENT_USER_NAME = "NewX_AVM-DE_CurrentUsername";
+    public static final String PROPERTY_CURRENT_USER_RIGHTS = "NewX_AVM-DE_CurrentUserRights";
 
     public LoginMethod detectLoginMethod(FritzConnection fc) {
         boolean anonymousLogin = false;
         boolean buttonLogin = false;
-        String user = "";
+        String userRights = "";
 
         try {
             Service service = fc.getService(SERVICE_LAN_CONFIG_SECURITY);
@@ -36,21 +36,29 @@ public class DetectLoginMethod {
                         try {
                             buttonLogin = response1.getValueAsBoolean(PROPERTY_BUTTON_LOGIN_ENABLED);
                         } catch (NoSuchFieldException e) {
-                            return LoginMethod.UNKNOWN;
+                            buttonLogin = false;
                         }
-
                     }
                 }
 
-                if (!buttonLogin) {
+                if (anonymousLogin && !buttonLogin) {
+
                     action = service.getAction(ACTION_GET_CURRENT_USER);
                     if (action != null) {
-                        Response response1 = action.execute();
-                        if (response1 != null) {
-                            try {
-                                user = response1.getValueAsString(PROPERTY_CURRENT_USER_NAME);
-                            } catch (NoSuchFieldException e) {
-                                return LoginMethod.UNKNOWN;
+                        try {
+                            Response response1 = action.execute();
+                            if (response1 != null) {
+                                try {
+                                    userRights = response1.getValueAsString(PROPERTY_CURRENT_USER_RIGHTS);
+                                } catch (NoSuchFieldException e) {
+                                    return LoginMethod.UNKNOWN;
+                                }
+                            }
+                        } catch (IOException e) {
+                            if (e.getMessage().contains("401")) {
+                                return LoginMethod.PASSWORD_ONLY;
+                            } else {
+                                throw e;
                             }
                         }
                     }
@@ -62,12 +70,16 @@ public class DetectLoginMethod {
 
         if (anonymousLogin && buttonLogin) {
             return LoginMethod.PASSWORDLESS_WITH_BUTTON;
-        } else if (anonymousLogin && user.isEmpty()) {
+        } else if (anonymousLogin && !userHasDialRights(userRights)) {
             return LoginMethod.PASSWORDLESS;
-        } else if (anonymousLogin && !user.isEmpty()) {
+        } else if (anonymousLogin && userHasDialRights(userRights)) {
             return LoginMethod.PASSWORD_ONLY;
         } else {
             return LoginMethod.USERNAME_PASSWORD;
         }
+    }
+
+    private boolean userHasDialRights(String userRights) {
+        return userRights.toLowerCase().contains("<path>dial</path><access>readwrite</access>");
     }
 }

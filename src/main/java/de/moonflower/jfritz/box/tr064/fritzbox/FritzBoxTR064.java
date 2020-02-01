@@ -43,7 +43,7 @@ public class FritzBoxTR064 {
         } else {
             this.password = password;
             if (user == null || user.isEmpty()) {
-                user = this.password;
+                user = "dummyUser";
             }
         }
     }
@@ -113,13 +113,6 @@ public class FritzBoxTR064 {
     }
 
     public String getConnectionInfo() {
-        String u = "";
-        if (this.user.equals(password)) {
-            u = "***";
-        } else {
-            u = this.user;
-        }
-
-        return String.format("%s://%s:%d (user: %s)", scheme, address, port, u);
+        return String.format("%s://%s:%d", scheme, address, port);
     }
 }

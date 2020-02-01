@@ -64,15 +64,13 @@ public class DetectFritzConnection {
             System.out.println("Using FritzBox at " + box.getUri());
             try {
                 box.connect(dfc.user, dfc.password);
+                System.out.println(box.getConnectionInfo());
                 printLoginMethod(box.getLoginMethod());
                 printFirmware(box.getFirmware());
 
-                FritzConnection fc = new FritzConnection(box.getScheme(), box.getAddress(), box.getPort(), dfc.user, dfc.password);
-                fc.init(null);
-
-                dfc.detectAnonymousLogin(fc);
-                dfc.detectTwoFactor(fc);
-                dfc.detectDialPort(fc);
+                dfc.detectAnonymousLogin(box);
+                dfc.detectTwoFactor(box);
+                dfc.detectDialPort(box);
             } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException | IOException | ParseException e) {
                 System.err.println("Could not establish connection to FritzBox");
                 e.printStackTrace();
@@ -85,6 +83,8 @@ public class DetectFritzConnection {
     private static void printLoginMethod(LoginMethod loginMethod) {
         if (LoginMethod.UNKNOWN.equals(loginMethod)) {
             System.out.println("Unbekannte Login-Methode");
+        } else if (LoginMethod.PASSWORDLESS_WITH_BUTTON.equals(loginMethod)) {
+            System.out.println("Login method: Kennwortlose Anmeldung mit zusätzlicher Bestätigung per Knopf");
         } else if (LoginMethod.PASSWORDLESS.equals(loginMethod)) {
             System.out.println("Login method: Kennwortlose Anmeldung");
         } else if (LoginMethod.PASSWORD_ONLY.equals(loginMethod)) {
@@ -187,12 +187,12 @@ public class DetectFritzConnection {
         }
     }
 
-    private void detectAnonymousLogin(FritzConnection fc) {
+    private void detectAnonymousLogin(FritzBoxTR064 box) {
         String currentUser = "";
         String currentUserRights = "";
 
         try {
-            Service service = fc.getService("LANConfigSecurity:1");
+            Service service = box.getService("LANConfigSecurity:1");
             if (service != null) {
                 Action action = service.getAction("X_AVM-DE_GetCurrentUser");
                 if (action != null) {
@@ -220,10 +220,10 @@ public class DetectFritzConnection {
         System.out.println("Current user rights: '" + currentUserRights + "'");
     }
 
-    private void detectTwoFactor(FritzConnection fc) {
+    private void detectTwoFactor(FritzBoxTR064 box) {
         boolean twoFactor = false;
         try {
-            Service service = fc.getService("X_AVM-DE_Auth:1");
+            Service service = box.getService("X_AVM-DE_Auth:1");
             if (service != null) {
                 Action action = service.getAction("GetInfo");
                 if (action != null) {
@@ -248,10 +248,10 @@ public class DetectFritzConnection {
         }
     }
 
-    private void detectDialPort(FritzConnection fc) {
+    private void detectDialPort(FritzBoxTR064 box) {
         String dialPort = "";
         try {
-            Service service = fc.getService("X_VoIP:1");
+            Service service = box.getService("X_VoIP:1");
             if (service != null) {
                 Action action = service.getAction("X_AVM-DE_DialGetConfig");
                 if (action != null) {
