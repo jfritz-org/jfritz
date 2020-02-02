@@ -7,6 +7,8 @@ import java.util.*;
 import javax.swing.JOptionPane;
 
 import de.bausdorf.avm.tr064.*;
+import de.moonflower.jfritz.box.tr064.fritzbox.FritzBoxTR064;
+import de.moonflower.jfritz.box.tr064.fritzbox.LoginMethod;
 import de.moonflower.jfritz.struct.*;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -110,7 +112,7 @@ public class FritzBox extends BoxClass {
 	private BoxCallListInterface callList;
 	private boolean shouldPopupLoginCredentials = true;
 
-	private FritzConnection fritzTR064Connection;
+	private FritzBoxTR064 fbTR064;
 	
 	public FritzBox(String name, String description,
 					String protocol, String address, String port, boolean useUsername, String username, String password)
@@ -134,7 +136,6 @@ public class FritzBox extends BoxClass {
 		} else {
 			this.address = address;
 		}
-		fritzTR064Connection = new FritzConnection(this.address, 49000, this.username, this.password);
 	}
 
 	public void init(boolean shouldPopupLoginCredentials) {
@@ -152,17 +153,44 @@ public class FritzBox extends BoxClass {
 			log.error(messages.getMessage("box.not_found"));
 			setBoxDisconnected();
 		}
-
-		initTR064Connection();
+		connectTR064();
 	}
 
-	private void initTR064Connection() {
+	private void connectTR064() {
 		try {
-			fritzTR064Connection.init(null);
-		} catch (IOException e) {
-			log.error(messages.getMessage("box.no_upnp_communication"));
-		} catch (ParseException e) {
-			log.error(messages.getMessage("box.invalid_upnp_response"));
+			fbTR064 = new FritzBoxTR064("https", this.address, 49443);
+			fbTR064.connect(this.username, this.password);
+		} catch (Exception e1) {
+			log.warn("Could not connect to TR064 using HTTPS. Try to connect using HTTP.");
+			try {
+				fbTR064 = new FritzBoxTR064("http", this.address, 49000);
+				fbTR064.connect(this.username, this.password);
+			} catch (Exception e2) {
+				log.error("Could not connect to TR064 using HTTP. Not using TR064 at all.");
+				fbTR064 = null;
+			}
+		}
+
+		if (fbTR064 != null) {
+			log.info(fbTR064.getConnectionInfo());
+			try {
+				log.info("Login-Method: " + fbTR064.getLoginMethod().name());
+				log.info("FritzBox: " + fbTR064.getFirmware().getName());
+				log.info("Firmware-Version: " + fbTR064.getFirmware().getFirmwareVersion());
+
+				if (LoginMethod.PASSWORDLESS_WITH_BUTTON.equals(fbTR064.getLoginMethod())
+						|| LoginMethod.UNKNOWN.equals(fbTR064.getLoginMethod())) {
+					Debug.errDlg(messages.getMessage("login_using_button"),
+							messages.getMessage("login_using_button_1"),
+							messages.getMessage("login_using_button_2"),
+							messages.getMessage("login_using_button_3"),
+							messages.getMessage("login_using_button_4"));
+					log.error(messages.getMessage("login_using_button"));
+					System.exit(-1);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -550,7 +578,7 @@ public class FritzBox extends BoxClass {
 							String name = response.get((i*2) + 1);
 
 							if ("er".equals(number) || ("".equals(number))) {
-								log.warn("addIsdnPorts: number is not set. Will not add port");
+								log.debug("addIsdnPorts: number is not set. Will not add port");
 							} else {
 								if ("er".equals(name)) {
 									log.warn("addIsdnPorts: name is not set for number " + number + ". Will not add port");
@@ -628,7 +656,7 @@ public class FritzBox extends BoxClass {
 							}
 
 							if ("".equals(internal)) {
-								log.warn("addDectMiniPorts: internal number is not set. Will not add port");
+								log.debug("addDectMiniPorts: internal number is not set. Will not add port");
 							} else {
 								Port port = new Port(10+Integer.parseInt(num), PortType.DECT, "DECT: " + name, "6"+num, internal);
 								log.debug("addDectMiniPorts: Adding port " + port.toStringDetailed());
@@ -684,7 +712,7 @@ public class FritzBox extends BoxClass {
 
 							boolean activated = "1".equals(response.get((i*2) + 0));
 							if (!activated) {
-								log.warn("addVoIPPorts: VoIP account '" + voipName + "'is not activated. Will not add port");
+								log.debug("addVoIPPorts: VoIP account '" + voipName + "'is not activated. Will not add port");
 							} else {
 								// Wählhilfe mit VoIP geht zumindest ab 06.03 nicht mehr, ging sie davor? (getestet mit 06.03 und 06.30) Ab welcher FW bis zu welcher?
 								Port port = new Port(20+i, PortType.VOIP, "VOIP: " + voipName, Integer.toString(20+i), "62"+Integer.toString(i));
@@ -883,37 +911,41 @@ public class FritzBox extends BoxClass {
 	}
 
 	private void getDataFromWANPPPConnection(UPNPAddonInfosListener listener) throws NoSuchFieldException, IOException {
-		Service service = this.fritzTR064Connection.getService("WANPPPConnection:1");
-		Action action = service.getAction("GetInfo");
-		Response r = synchronizedTR064Call(action);
-		String dnsServers = r.getValueAsString("NewDNSServers");
-		if (dnsServers.contains(",")) {
-			String[] splitted = dnsServers.split(",");
-			listener.setDNSInfo(splitted[0], splitted[1]);
-		} else {
-			listener.setDNSInfo(dnsServers, "-");
+		if (fbTR064 != null) {
+			Service service = fbTR064.getService("WANPPPConnection:1");
+			Action action = service.getAction("GetInfo");
+			Response r = synchronizedTR064Call(action);
+			String dnsServers = r.getValueAsString("NewDNSServers");
+			if (dnsServers.contains(",")) {
+				String[] splitted = dnsServers.split(",");
+				listener.setDNSInfo(splitted[0], splitted[1]);
+			} else {
+				listener.setDNSInfo(dnsServers, "-");
+			}
 		}
 	}
 
 	private void getDataFromWANCommonInterfaceConfig(UPNPAddonInfosListener listener) throws NoSuchFieldException, IOException {
-		Service service = this.fritzTR064Connection.getService("WANCommonInterfaceConfig:1");
-		Action action = service.getAction("GetTotalBytesReceived");
-		Response r = synchronizedTR064Call(action);
-		String bytesReceived =  r.getValueAsString("NewTotalBytesReceived");
+		if (fbTR064 != null) {
+			Service service = fbTR064.getService("WANCommonInterfaceConfig:1");
+			Action action = service.getAction("GetTotalBytesReceived");
+			Response r = synchronizedTR064Call(action);
+			String bytesReceived = r.getValueAsString("NewTotalBytesReceived");
 
-		action = service.getAction("GetTotalBytesSent");
-		r = synchronizedTR064Call(action);
-		String bytesSent = r.getValueAsString("NewTotalBytesSent");
-		listener.setTotalBytesInfo(bytesSent, bytesReceived);
+			action = service.getAction("GetTotalBytesSent");
+			r = synchronizedTR064Call(action);
+			String bytesSent = r.getValueAsString("NewTotalBytesSent");
+			listener.setTotalBytesInfo(bytesSent, bytesReceived);
 
-		Map<String, Object> arguments = new HashMap<String, Object>();
-		arguments.put("NewSyncGroupIndex", 0);
-		action = service.getAction("X_AVM-DE_GetOnlineMonitor");
-		r = synchronizedTR064Call(action, arguments);
-		String upstreamBps = r.getValueAsString("Newus_current_bps");
-		String downstreamBps = r.getValueAsString("Newds_current_bps");
+			Map<String, Object> arguments = new HashMap<String, Object>();
+			arguments.put("NewSyncGroupIndex", 0);
+			action = service.getAction("X_AVM-DE_GetOnlineMonitor");
+			r = synchronizedTR064Call(action, arguments);
+			String upstreamBps = r.getValueAsString("Newus_current_bps");
+			String downstreamBps = r.getValueAsString("Newds_current_bps");
 
-		listener.setBytesRate(getFirstBpsValue(upstreamBps), getFirstBpsValue(downstreamBps));
+			listener.setBytesRate(getFirstBpsValue(upstreamBps), getFirstBpsValue(downstreamBps));
+		}
 	}
 
 	private String getFirstBpsValue(String commaListBps) {
@@ -933,21 +965,23 @@ public class FritzBox extends BoxClass {
 	}
 
 	public void getStatusInfo(UPNPStatusInfoListener listener) throws IOException, NoSuchFieldException {
-		Service service = this.fritzTR064Connection.getService("WANPPPConnection:1");
-		Action action = service.getAction("GetInfo");
+		if (fbTR064 != null) {
+			Service service = fbTR064.getService("WANPPPConnection:1");
+			Action action = service.getAction("GetInfo");
 
-		try {
-			Response r = synchronizedTR064Call(action);
-			String uptime = r.getValueAsString("NewUptime");
-			listener.setUptime(uptime);
-		} catch (IOException e) {
-			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
-			listener.setUptime("-");
-			throw e;
-		} catch (NoSuchFieldException e) {
-			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
-			listener.setUptime("-");
-			throw e;
+			try {
+				Response r = synchronizedTR064Call(action);
+				String uptime = r.getValueAsString("NewUptime");
+				listener.setUptime(uptime);
+			} catch (IOException e) {
+				log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+				listener.setUptime("-");
+				throw e;
+			} catch (NoSuchFieldException e) {
+				log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+				listener.setUptime("-");
+				throw e;
+			}
 		}
 	}
 
@@ -957,45 +991,51 @@ public class FritzBox extends BoxClass {
 	 * @return
 	 */
 	public void getExternalIPAddress(UPNPExternalIpListener listener) throws IOException, NoSuchFieldException {
-		Service service = this.fritzTR064Connection.getService("WANPPPConnection:1");
-		Action action = service.getAction("GetExternalIPAddress");
+		if (fbTR064 != null) {
+			Service service = fbTR064.getService("WANPPPConnection:1");
+			Action action = service.getAction("GetExternalIPAddress");
 
-		try {
-			Response r = synchronizedTR064Call(action);
-			String ip = r.getValueAsString("NewExternalIPAddress");
-			listener.setExternalIp(ip);
-		} catch (IOException e) {
-			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
-			listener.setExternalIp("-");
-			throw e;
-		} catch (NoSuchFieldException e) {
-			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
-			listener.setExternalIp("-");
-			throw e;
+			try {
+				Response r = synchronizedTR064Call(action);
+				String ip = r.getValueAsString("NewExternalIPAddress");
+				listener.setExternalIp(ip);
+			} catch (IOException e) {
+				log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+				listener.setExternalIp("-");
+				throw e;
+			} catch (NoSuchFieldException e) {
+				log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+				listener.setExternalIp("-");
+				throw e;
+			}
+		} else {
+			listener.setExternalIp("TR064 disabled");
 		}
 	}
 
 	public void getCommonLinkInfo(UPNPCommonLinkPropertiesListener listener) throws NoSuchFieldException, IOException {
-		Service service = this.fritzTR064Connection.getService("WANDSLInterfaceConfig:1");
-		Action action = service.getAction("GetInfo");
+		if (fbTR064 != null) {
+			Service service = fbTR064.getService("WANDSLInterfaceConfig:1");
+			Action action = service.getAction("GetInfo");
 
-		try {
-			Response r = synchronizedTR064Call(action);
-			String downstreamCurrRate = r.getValueAsString("NewDownstreamCurrRate");
-			String upstreamCurrRate = r.getValueAsString("NewUpstreamCurrRate");
+			try {
+				Response r = synchronizedTR064Call(action);
+				String downstreamCurrRate = r.getValueAsString("NewDownstreamCurrRate");
+				String upstreamCurrRate = r.getValueAsString("NewUpstreamCurrRate");
 
-			listener.setDownstreamMaxBitRate(downstreamCurrRate);
-			listener.setUpstreamMaxBitRate(upstreamCurrRate);
-		} catch (IOException e) {
-			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
-			listener.setDownstreamMaxBitRate("-");
-			listener.setUpstreamMaxBitRate("-");
-			throw e;
-		} catch (NoSuchFieldException e) {
-			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
-			listener.setDownstreamMaxBitRate("-");
-			listener.setUpstreamMaxBitRate("-");
-			throw e;
+				listener.setDownstreamMaxBitRate(downstreamCurrRate);
+				listener.setUpstreamMaxBitRate(upstreamCurrRate);
+			} catch (IOException e) {
+				log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+				listener.setDownstreamMaxBitRate("-");
+				listener.setUpstreamMaxBitRate("-");
+				throw e;
+			} catch (NoSuchFieldException e) {
+				log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+				listener.setDownstreamMaxBitRate("-");
+				listener.setUpstreamMaxBitRate("-");
+				throw e;
+			}
 		}
 	}
 
@@ -1418,37 +1458,73 @@ public class FritzBox extends BoxClass {
 	}
 
 	@Override
-	public boolean is2FAenabled() throws IOException, NoSuchFieldException {
-		Service service = this.fritzTR064Connection.getService("X_AVM-DE_Auth:1");
-		Action action = service.getAction("GetInfo");
+	public boolean isTR064Available() {
+		return fbTR064 != null;
+	}
+
+	@Override
+	public boolean isDialAssistAvailable() {
+		if (!isTR064Available()) {
+			log.info("Dial assist not available, because TR064 is not available.");
+			return false;
+		}
 
 		try {
-			Response r = synchronizedTR064Call(action);
-			return r.getValueAsBoolean("NewEnabled");
-		} catch (IOException e) {
-			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
-			initTR064Connection();
-			throw e;
-		} catch (NoSuchFieldException e) {
-			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
-			throw e;
+			LoginMethod loginMethod = fbTR064.getLoginMethod();
+			if (LoginMethod.UNKNOWN.equals(loginMethod)
+					|| LoginMethod.PASSWORDLESS.equals(loginMethod)
+					|| LoginMethod.PASSWORDLESS_WITH_BUTTON.equals(loginMethod)) {
+				log.info("Dial assist not available, because login method is: " + loginMethod.name());
+				return false;
+			} else {
+				return true;
+			}
+		} catch (Exception e) {
+			log.info("Dial assist not available, because login method could not be detected.");
+			return false;
+		}
+	}
+
+	@Override
+	public boolean is2FAenabled() throws IOException, NoSuchFieldException {
+		if (fbTR064 != null) {
+			Service service = fbTR064.getService("X_AVM-DE_Auth:1");
+			Action action = service.getAction("GetInfo");
+
+			try {
+				Response r = synchronizedTR064Call(action);
+				return r.getValueAsBoolean("NewEnabled");
+			} catch (IOException e) {
+				log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+				connectTR064();
+				throw e;
+			} catch (NoSuchFieldException e) {
+				log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+				throw e;
+			}
+		} else {
+			return false;
 		}
 	}
 
 	@Override
 	public String getDialPort() throws IOException, NoSuchFieldException {
-		Service service = this.fritzTR064Connection.getService("X_VoIP:1");
-		Action action = service.getAction("X_AVM-DE_DialGetConfig");
+		if (fbTR064 != null) {
+			Service service = fbTR064.getService("X_VoIP:1");
+			Action action = service.getAction("X_AVM-DE_DialGetConfig");
 
-		try {
-			Response r = synchronizedTR064Call(action);
-			return r.getValueAsString("NewX_AVM-DE_PhoneName");
-		} catch (IOException e) {
-			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
-			throw e;
-		} catch (NoSuchFieldException e) {
-			log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
-			throw e;
+			try {
+				Response r = synchronizedTR064Call(action);
+				return r.getValueAsString("NewX_AVM-DE_PhoneName");
+			} catch (IOException e) {
+				log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+				throw e;
+			} catch (NoSuchFieldException e) {
+				log.error(messages.getMessage("box.could_not_get_status_from_UPNP") + e.getMessage());
+				throw e;
+			}
+		} else {
+			return "-";
 		}
 	}
 

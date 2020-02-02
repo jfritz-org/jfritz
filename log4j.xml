@@ -10,19 +10,23 @@
   </appender>
 
   <category name="de.moonflower.jfritz">
-    <priority value="error"/>
+    <priority value="warn"/>
   </category>
 
   <category name="de.moonflower.jfritz.Main">
     <priority value="info"/>
   </category>
 
+  <category name="de.moonflower.jfritz.box.fritzbox.FritzBox">
+    <priority value="info"/>
+  </category>
+
   <category name="de.robotniko.helper">
-    <priority value="error"/>
+    <priority value="warn"/>
   </category>
   
   <category name="de.robotniko.reverseLookup">
-    <priority value="error"/>
+    <priority value="warn"/>
   </category>
 
   <root>

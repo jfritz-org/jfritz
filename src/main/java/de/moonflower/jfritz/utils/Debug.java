@@ -71,18 +71,31 @@ public class Debug {
 	private static JFrame display_frame;
 
 	protected static PropertyProvider properties = PropertyProvider.getInstance();
-	protected static MessageProvider messages = MessageProvider.getInstance();
+	protected static MessageProvider messageProvider = MessageProvider.getInstance();
 
 	private static BufferedReader in;
 	
 	/**
 	 * Show error Dialog with message
 	 *
-	 * @param message
+	 * @param messages
 	 */
-	public static void errDlg(String message) {
-		JOptionPane.showMessageDialog(null, message,
-				messages.getMessage("error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+	public static void errDlg(String... messages) {
+		if (messages == null || messages.length == 0) {
+			return;
+		}
+
+		String msg;
+		if (messages.length == 1) {
+			msg = messages[0];
+		} else {
+			msg = messages[0];
+			for (int i=1; i<messages.length; i++) {
+				msg = msg + "\n" + messages[i];
+			}
+		}
+		JOptionPane.showMessageDialog(null, msg,
+				messageProvider.getMessage("error"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 	}
 	
 	public static void generatePanel()
@@ -130,7 +143,7 @@ public class Debug {
 		save_button.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fc = new JFileChooser(JFritzDataDirectory.getInstance().getDataDirectory()); //$NON-NLS-1$
-				fc.setDialogTitle(messages.getMessage("save_debug_log")); //$NON-NLS-1$
+				fc.setDialogTitle(messageProvider.getMessage("save_debug_log")); //$NON-NLS-1$
 				fc.setDialogType(JFileChooser.SAVE_DIALOG);
 				fc.setFileFilter(new FileFilter() {
 					public boolean accept(File f) {
@@ -139,7 +152,7 @@ public class Debug {
 					}
 
 					public String getDescription() {
-						return messages.getMessage("debug_files"); //$NON-NLS-1$
+						return messageProvider.getMessage("debug_files"); //$NON-NLS-1$
 					}
 				});
 				if (fc.showSaveDialog(display_frame) == JFileChooser.APPROVE_OPTION) {
@@ -149,9 +162,9 @@ public class Debug {
 					properties.setProperty("options.exportCSVpath", path); //$NON-NLS-1$
 					File file = fc.getSelectedFile();
 					if (file.exists()) {
-						if (JOptionPane.showConfirmDialog(display_frame, messages.getMessage(
+						if (JOptionPane.showConfirmDialog(display_frame, messageProvider.getMessage(
 								"overwrite_file").replaceAll("%F", file.getName()), //$NON-NLS-1$, //$NON-NLS-2$
-								messages.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
+								messageProvider.getMessage("dialog_title_overwrite_file"), //$NON-NLS-1$
 								JOptionPane.YES_NO_OPTION) == JOptionPane.OK_OPTION) {
 							try {
 								log_area.write(new FileWriter(file.getAbsolutePath()));

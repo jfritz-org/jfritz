@@ -3,7 +3,7 @@
 
     <groupId>org.jfritz</groupId>
     <artifactId>jfritz</artifactId>
-    <version>0.7.7</version>
+    <version>0.7.8</version>
     <packaging>jar</packaging>
     <description>A program to communicate with your FRITZ!Box</description>
 
@@ -27,8 +27,8 @@
 
         <version.proxy>1.0.2</version.proxy>
         <version.fboxlib>1.0.26</version.fboxlib>
-        <version.reverseLookup>1.0.11</version.reverseLookup>
-        <version.FritzTR064>0.9.3</version.FritzTR064>
+        <version.reverseLookup>1.0.12</version.reverseLookup>
+        <version.FritzTR064>0.9.5</version.FritzTR064>
 
         <version.httpClient>4.5.3</version.httpClient>
         <version.commonsIo>2.4</version.commonsIo>
@@ -79,6 +79,12 @@
             <groupId>de.bausdorf.fritz</groupId>
             <artifactId>FritzTR064</artifactId>
             <version>${version.FritzTR064}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -127,6 +133,12 @@
             <groupId>io.github.dheid</groupId>
             <artifactId>fontchooser</artifactId>
             <version>${version.fontchooser}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>1.7.8</version>
         </dependency>
 
         <dependency>
@@ -309,6 +321,16 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <manifestEntries>

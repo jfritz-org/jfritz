@@ -238,8 +238,6 @@ public class CallerTable extends JTable {
 
 	/**
 	 * Creates the columns of the CallerTable
-	 *
-	 * @param messages
 	 */
 	private void createColumns() {
 
@@ -252,7 +250,9 @@ public class CallerTable extends JTable {
 
 		TableColumn numberColumn = createColumn(3, COLUMN_NUMBER,
 				new NumberCellRenderer());
-		numberColumn.setCellEditor(new CallCellEditor());
+		if (JFritz.getBoxCommunication().getBox(0).isDialAssistAvailable()) {
+			numberColumn.setCellEditor(new CallCellEditor());
+		}
 
 		createColumn(4, COLUMN_PARTICIPANT,
 				new PersonCellRenderer());

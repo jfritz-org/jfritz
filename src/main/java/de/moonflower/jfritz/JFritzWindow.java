@@ -446,9 +446,15 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 		mBar.add(monitorButton);
 
 		calldialogButton = new JButton();
-		calldialogButton.setToolTipText(messages.getMessage("dial_assist"));
-		calldialogButton.setActionCommand("callDialog");
-		calldialogButton.addActionListener(this);
+		if (JFritz.getBoxCommunication().getBox(0).isDialAssistAvailable()) {
+			calldialogButton.setToolTipText(messages.getMessage("dial_assist"));
+			calldialogButton.setActionCommand("callDialog");
+			calldialogButton.addActionListener(this);
+			calldialogButton.setEnabled(true);
+		} else {
+			calldialogButton.setToolTipText(messages.getMessage("enable_tr064"));
+			calldialogButton.setEnabled(false);
+		}
 		calldialogButton.setIcon(getImage("PhoneBig.png"));
 		mBar.add(calldialogButton);
 
@@ -897,8 +903,7 @@ public class JFritzWindow extends JFrame implements Runnable, ActionListener,
 
 	/**
 	 * Shows the configuration dialog
-	 * @throws de.robotniko.fboxlib.exceptions.InvalidCredentialsException 
-	 * @throws InvalidCredentialsException 
+	 * @throws InvalidCredentialsException
 	 * @throws PageNotFoundException 
 	 * @throws LoginBlockedException 
 	 */

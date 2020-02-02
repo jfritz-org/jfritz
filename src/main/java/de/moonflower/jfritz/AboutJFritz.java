@@ -63,7 +63,7 @@ public class AboutJFritz extends JDialog implements ActionListener {
 		JLabel revision = new JLabel("Revision: " + ProgramConstants.REVISION);
 		JLabel buildDate = new JLabel("Build: " + ProgramConstants.BUILD_DATE);
 		JLabel newLine = new JLabel(" ");
-		JLabel admin = new JLabel("Project-admin: Robert Palmer <jfritz@robotniko.de>");
+		JLabel admin = new JLabel("Project-admin: Robert Palmer <robert@jfritz.org>");
 		JLabel initiator = new JLabel("Project-initiator: Arno Willig <akw@thinkwiki.org>");
 		JLabel newLine2 = new JLabel(" ");
 		JLabel copyright = new JLabel("(c) 2005 - " + cal.get(Calendar.YEAR) + " by all members of the JFritz-Team");
@@ -166,7 +166,7 @@ public class AboutJFritz extends JDialog implements ActionListener {
 
 	private void showCredits() {
 		JOptionPane.showMessageDialog(this, "Active Developers:\n"
-		+ "Robert Palmer <robotniko@users.sourceforge.net>\n" 	//$NON-NLS-1$
+		+ "Robert Palmer <robert@jfritz.org>\n" 	//$NON-NLS-1$
 		+ "\n"													//$NON-NLS-1$
 		+ "Former Developers:\n" 								//$NON-NLS-1$
 		+ "Arno Willig <akw@thinkwiki.org>\n"					//$NON-NLS-1$

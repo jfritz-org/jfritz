@@ -31,7 +31,6 @@ import org.xml.sax.XMLReader;
 import de.moonflower.jfritz.constants.ProgramConstants;
 import de.moonflower.jfritz.messages.MessageProvider;
 import de.moonflower.jfritz.struct.QuickDial;
-//import de.robotniko.fboxlib.fritzbox.FritzBoxCommunication;
 
 /**
  * Table model for QuickDials
@@ -214,7 +213,7 @@ public class QuickDials extends AbstractTableModel {
 			log.error("Error on parsing " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
             log.error(e.toString());
 		} catch (IOException e) {
-			log.warn("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
+			log.debug("Could not read " + filename + "!"); //$NON-NLS-1$,  //$NON-NLS-2$
 		}
 	}
 

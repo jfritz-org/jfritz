@@ -114,7 +114,9 @@ public class MonitoringPanel extends JPanel implements ActionListener, UPNPAddon
 
 		JPanel innerPanel = new JPanel();
 		innerPanel.setLayout(new BorderLayout());
-		innerPanel.add(createInternetPanel(), BorderLayout.NORTH);
+		if (JFritz.getBoxCommunication().getBox(0).isTR064Available()) {
+			innerPanel.add(createInternetPanel(), BorderLayout.NORTH);
+		}
 		innerPanel.add(createPhonePanel(), BorderLayout.CENTER);
 
 		this.add(new JScrollPane(innerPanel), BorderLayout.CENTER);

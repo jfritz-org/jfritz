@@ -69,8 +69,10 @@ public class JFritzTray {
 
         menu.add(createMenuItemTranslated("fetchlist", "fetchList"));  //$NON-NLS-1$,  //$NON-NLS-2$
         menu.add(createMenuItemTranslated("reverse_lookup", "reverselookup"));  //$NON-NLS-1$,  //$NON-NLS-2$
-        menu.add(createMenuItemTranslated("dial_assist", "callDialog"));  //$NON-NLS-1$,  //$NON-NLS-2$
-        menu.add(createMenuItemTranslated("dial_assist_clipboard", "callDialogTray"));  //$NON-NLS-1$,  //$NON-NLS-2$
+        if (JFritz.getBoxCommunication().getBox(0).isDialAssistAvailable()) {
+            menu.add(createMenuItemTranslated("dial_assist", "callDialog"));  //$NON-NLS-1$,  //$NON-NLS-2$
+            menu.add(createMenuItemTranslated("dial_assist_clipboard", "callDialogTray"));  //$NON-NLS-1$,  //$NON-NLS-2$
+        }
         menu.add(createMenuItemTranslated("config", "config"));  //$NON-NLS-1$,  //$NON-NLS-2$
         menu.addSeparator();
 
