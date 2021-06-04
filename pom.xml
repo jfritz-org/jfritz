@@ -30,7 +30,7 @@
         <version.reverseLookup>1.0.12</version.reverseLookup>
         <version.FritzTR064>0.9.5</version.FritzTR064>
 
-        <version.httpClient>4.5.3</version.httpClient>
+        <version.httpClient>4.5.13</version.httpClient>
         <version.commonsIo>2.4</version.commonsIo>
         <version.jdom>1.1.3</version.jdom>
         <version.jacob>1.18</version.jacob>
